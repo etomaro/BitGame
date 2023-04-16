@@ -67,11 +67,26 @@ const inputStyle = {
 // textのスタイル
 const textStyle = {
   // フォントサイズを大きくする
-  fontSize: "30px",
+  fontSize: "25px",
   // テキストの色を青にする
   color: "#e0ffff",
   // 下の余白をあける
   marginBottom: "70px",
+}
+
+// 画面スクロールを禁止にするコンポーネント
+function DisableScroll() {
+  useEffect(() => {
+    // body要素にoverflow: hiddenを設定
+    document.body.style.overflow = 'hidden';
+
+    // コンポーネントがアンマウントされたときにoverflowスタイルを削除
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
+  return null;
 }
 
 // QandA
@@ -95,19 +110,19 @@ const QandA = () => {
   // 削除ボタンをクリックしたときの処理
   const deleteClick = () => {
     // seInNumの最後の文字を削除
-    setInNum(seInNum.slice(0, -1));
+    // setInNum(seInNum.slice(0, -1));
+
+    // inNumを初期化
+    setInNum("");
   }
   // okボタンをクリックしたときの処理
   const okClick = () => {
     // test
 
   }
-  // seInNumの値を初期化する処理
-  const initInNum = () => {
-    setInNum("");
-  }
   return (
       <>
+        <DisableScroll />
         <Box>
           <Box style={textStyle}>2進数を10進数に変えてください</Box>
           <Box mb={3}> 1001,0001 -> 
