@@ -95,7 +95,8 @@ const QandA = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // state
-  const [seInNum, setInNum] = useState("");
+  const [seInNum, setInNum] = useState("");  // 入力された数値
+  const [seCount, setCount] = useState(1);  // 問題数
 
 
   // ボタンをクリックしたときの処理
@@ -125,6 +126,7 @@ const QandA = () => {
         <DisableScroll />
         <Box>
           <Box style={textStyle}>2進数を10進数に変えてください</Box>
+          <Box fontSize="midium" mb="20px">{seCount}問目</Box>
           <Box mb={3}> 1001,0001 -> 
             {/* 入力 */}
             <TextField onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
@@ -155,9 +157,9 @@ const QandA = () => {
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+      <body className="App-body">
         <QandA />
-      </header>
+      </body>
     </div>
   );
 }
