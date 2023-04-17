@@ -23,7 +23,6 @@ function binaryToDecimal(binary) {
 }
 
 
-
 // 数値ボタンのスタイル
 const buttonStyle = {
   width: "calc(100% / 5)",
