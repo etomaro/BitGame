@@ -10,25 +10,15 @@ import React, { useState, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-// 4bit2進数と対応する10進数のオブジェクトを作成
-const bit4 = {
-  '0000': '0',  
-  '0001': '1',
-  '0010': '2',
-  '0011': '3',
-  '0100': '4',
-  '0101': '5',
-  '0110': '6',
-  '0111': '7',
-  '1000': '8',
-  '1001': '9',
-  '1010': '10',
-  '1011': '11',
-  '1100': '12',
-  '1101': '13',
-  '1110': '14',
-  '1111': '15',
+import './App.css';
+
+// 8bit2進数を10進数に変換する関数
+function binaryToDecimal(binary) {
+  return binary.split('').reverse().reduce((acc, curr, index) => {
+    return acc + curr * Math.pow(2, index);
+  }, 0);
 }
+
 
 
 // 数値ボタンのスタイル
@@ -73,6 +63,21 @@ const textStyle = {
   // 下の余白をあける
   marginBottom: "70px",
 }
+// doneのスタイル
+const doneStyle = {
+  // 画面の下に固定する
+  position: "fixed",
+  bottom: "30px",
+}
+
+const itemStyle = {
+  width: "70px",
+  // テキストを左寄せにする
+  textAlign: "left",
+  // フォントサイズ
+  fontSize: "15px",
+};
+
 
 // 画面スクロールを禁止にするコンポーネント
 function DisableScroll() {
@@ -97,9 +102,39 @@ const QandA = () => {
   // state
   const [seInNum, setInNum] = useState("");  // 入力された数値
   const [seCount, setCount] = useState(1);  // 問題数
+  const [seMaxCount, setMaxCount] = useState(10);  // 問題数の最大値
+  const [seIsGame, setIsGame] = useState(true);  // ゲーム中かどうか
+  const [sedone, setDone] = useState([]);   // 解答した問題の正負
+  const [seQuestion, setQuestion] = useState("")  // 問題の10進数
+  const [seIsGood, setIsGood] = useState(false);  // 正解の時
+  const [seIsBad, setIsBad] = useState(false);  // 不正解の時
+
+  // 問題をランダムに作成する関数
+  const createQuestion = () => {
+    // 0~255の乱数を作成
+    const num = Math.floor(Math.random() * 256);
+    // 2進数に変換
+    const binary = num.toString(2);
+    // 8桁になるように0を追加
+    const question = binary.padStart(8, "0");
+    return question;
+  }
+
+  // 最初にstate(問題)を設定
+  useEffect (() => {
+    console.log("a")
+    setQuestion(createQuestion());
+  },[])
+
+  // 問題数が最大値に達したら終了
+  useEffect (() => {
+    if (seCount > seMaxCount) {
+      setIsGame(false);
+    }
+  },[seCount])
 
 
-  // ボタンをクリックしたときの処理
+  // 数値ボタンをクリックしたときの処理
   const btnClick = (e) => {
     setInNum(seInNum + e.target.textContent);
   }
@@ -118,8 +153,46 @@ const QandA = () => {
   }
   // okボタンをクリックしたときの処理
   const okClick = () => {
-    // test
+    // 問題を10進数に変換
+    const question = binaryToDecimal(seQuestion);
+    // questionを文字に変換
+    const questionStr = question.toString();
+    // decimalとquestionが一致したら正解
+    if (seInNum === questionStr) {
+      // 正解した問題を配列に追加
+      setDone([...sedone, true]);
+      console.log("正解")
+      setIsGood(true);
+    } else {
+      // 不正解の場合はfalseを追加
+      setDone([...sedone, false]);
+      console.log("不正解")
+      setIsBad(true);
+    }
 
+    // 問題数を1増やす
+    setCount(seCount + 1);
+    // 問題を作成
+    setQuestion(createQuestion());
+    // 入力を初期化
+    setInNum("");
+
+    // 0.2秒後に正解or不正解の表示を消す
+    setTimeout(() => {
+      setIsGood(false);
+      setIsBad(false);
+    }
+    , 2000);
+  }
+  // 正誤の表示
+  const done = (value) => {
+    if (value === true) {
+      return  "○";
+    } else if (value === false) {
+      return "×";
+    } else {
+      return "";
+    }
   }
   return (
       <>
@@ -127,7 +200,8 @@ const QandA = () => {
         <Box>
           <Box style={textStyle}>2進数を10進数に変えてください</Box>
           <Box fontSize="midium" mb="20px">{seCount}問目</Box>
-          <Box mb={3}> 1001,0001 -> 
+          <Box mb={3}> 
+            {seQuestion} ->
             {/* 入力 */}
             <TextField onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
             {/* 削除ボタン */}
@@ -149,7 +223,27 @@ const QandA = () => {
             <Button variant="contained" style={buttonStyle} onClick={btnClick}>9</Button>
           </Box>
           {/* okボタン */}
-          <Button variant="contained" style={okButtonStyle}>ok</Button>
+          <Button variant="contained" style={okButtonStyle} onClick={okClick}>ok</Button>
+          {/* 解答済みの正誤 */}
+          <Box style={doneStyle}>
+            <Box display="flex" flexWrap="wrap">
+              <Box style={itemStyle}>1問: {done(sedone[0])}</Box>
+              <Box style={itemStyle}>2問: {done(sedone[1])}</Box>
+              <Box style={itemStyle}>3問: {done(sedone[2])}</Box>
+              <Box style={itemStyle}>4問: {done(sedone[3])}</Box>
+              <Box style={itemStyle}>5問: {done(sedone[4])}</Box>
+            </Box>
+            <Box display="flex" flexWrap="wrap">
+              <Box style={itemStyle}>6問: {done(sedone[5])}</Box>
+              <Box style={itemStyle}>7問: {done(sedone[6])}</Box>
+              <Box style={itemStyle}>8問: {done(sedone[7])}</Box>
+              <Box style={itemStyle}>9問: {done(sedone[8])}</Box>
+              <Box style={itemStyle}>10問: {done(sedone[9])}</Box>
+            </Box>
+          </Box>
+          {/* 正解の場合 */}
+          {seIsGood && <div className="circle"></div>}
+          {seIsBad && <div className="cross"></div>}
         </Box>
       </>
   )
