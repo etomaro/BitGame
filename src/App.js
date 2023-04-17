@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import React, { useState, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -97,6 +99,12 @@ const itemStyle = {
   // フォントサイズ
   fontSize: "15px",
 };
+const choiceStyle = {
+  // テキストを左寄せにする
+  textAlign: "left",
+  // 縦に並べる
+  flexDirection: "column",
+}
 
 
 // 画面スクロールを禁止にするコンポーネント
@@ -134,6 +142,10 @@ const QandA = () => {
   const [seStartTime, setStartTime] = useState(null);  // 開始時刻
   const [seEndMinute, setEndMinute] = useState("")  // 経過時間(分)
   const [seEndSecond, setEndSecond] = useState("")  // 経過時間(秒)
+  // 0: 8bit2進数を10進数に変換する
+  // 1: 8bit2進数を10進数に変換する(上位4bitは0)
+  // 2: 8bit2進数を10進数に変換する(下位4bitは0)
+  const [seQuestionType, setQuestionType] = useState(0);  // 問題の種類
 
   // 正答率を計算する関数
   const calcRate = () => {
@@ -146,21 +158,41 @@ const QandA = () => {
     return rate;
   }
   // 問題をランダムに作成する関数
-  const createQuestion = () => {
-    // 0~255の乱数を作成
-    const num = Math.floor(Math.random() * 256);
-    // 2進数に変換
-    const binary = num.toString(2);
-    // 8桁になるように0を追加
-    const question = binary.padStart(8, "0");
+  const createQuestion = (type) => {
+    let question = "";
+
+    if (type === 0) {
+      // 8bit2進数を10進数に変換する
+      // 0~255の乱数を作成
+      const num = Math.floor(Math.random() * 256);
+      // 2進数に変換
+      const binary = num.toString(2);
+      // 8桁になるように0を追加
+      question = binary.padStart(8, "0");
+    }else if (type === 1) {
+      // 8bit2進数を10進数に変換する(上位4bitは0)
+      // 0~15の乱数を作成
+      const num = Math.floor(Math.random() * 16);
+      // 2進数に変換
+      const binary = num.toString(2);
+      // 4桁になるように0を追加
+      question = binary.padStart(4, "0");
+      // 先頭に0000を追加
+      question = "0000".concat(question);
+    }else if (type === 2) {
+      // 8bit2進数を10進数に変換する(下位4bitは0)
+      // 0~15の乱数を作成
+      const num = Math.floor(Math.random() * 16);
+      // 2進数に変換
+      const binary = num.toString(2);
+      // 4桁になるように0を追加
+      question = binary.padStart(4, "0");
+      // 8桁になるように0を追加
+      question = question.concat("0000");
+    };
+
     return question;
   }
-
-  // 最初にstate(問題)を設定
-  useEffect (() => {
-    console.log("a")
-    setQuestion(createQuestion());
-  },[])
 
 
   // 数値ボタンをクリックしたときの処理
@@ -222,7 +254,7 @@ const QandA = () => {
     // 問題数を1増やす
     setCount(seCount + 1);
     // 問題を作成
-    setQuestion(createQuestion());
+    setQuestion(createQuestion(seQuestionType));
     // 入力を初期化
     setInNum("");
 
@@ -237,6 +269,8 @@ const QandA = () => {
   const startClick = () => {
     // ゲーム開始
     setIsGame(1);
+    // 最初の問題を設定
+    setQuestion(createQuestion(seQuestionType));
     // 計測開始
     setStartTime(new Date)
   }
@@ -255,7 +289,24 @@ const QandA = () => {
         <DisableScroll />
         {/* ゲーム開始前の時 */}
         {seIsGame === 0 &&
+        <>
+          {/* 問題の選択 */}
+          <Box style={choiceStyle}>
+            <FormControlLabel
+              control={<Checkbox checked={seQuestionType === 0} onChange={() => setQuestionType(0)} name="checkedA" />}
+              label="2進数 -> 10進数"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={seQuestionType === 1} onChange={() => setQuestionType(1)} name="checkedA" />}
+              label="2進数 -> 10進数(上位4bitは0)"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={seQuestionType === 2} onChange={() => setQuestionType(2)} name="checkedA" />}
+              label="2進数 -> 10進数(下位4bitは0)"
+            />
+          </Box>
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>START</Button>
+        </>
         }
         {/* ゲーム中の時 */}
         {seIsGame === 1 &&
