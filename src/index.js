@@ -23,11 +23,14 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// firebase analytics
-const analytics = getAnalytics(app);
+
+//  本番環境のみFirebase Analyticsを有効にする
+if (process.env.REACT_APP_ENV === 'PROD') {
+  // firebase analytics
+  const analytics = getAnalytics(app);
+}
 root.render(
   <React.StrictMode>
     <App />
