@@ -237,6 +237,11 @@ const QandA = () => {
       <>
         <DisableScroll />
         {/* ゲーム開始前の時 */}
+        <Box>{process.env.REACT_APP_ENV}</Box>
+        {
+          process.env.REACT_APP_ENV === 'PROD' &&
+          <Box>本番環境です</Box>
+        }
         {seIsGame === 0 &&
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>START</Button>
         }
