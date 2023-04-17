@@ -43,10 +43,8 @@ const okButtonStyle = {
   border: "solid 1px #000000",
   // ボタンの文字を黒にする
   color: "#000000",
-  // 中央に配置する
-  margin: "auto",
   // 上との間隔をあける
-  marginTop: "20px",
+  marginTop: "50px",
 };
 
 // startボタンのスタイル
@@ -70,6 +68,7 @@ const inputStyle = {
   // ボタンの文字を黒にする
   color: "#000000",
   height: "50px",
+  marginBottom: "30px",
 };
 // textのスタイル
 const textStyle = {
@@ -79,6 +78,7 @@ const textStyle = {
   color: "#e0ffff",
   // 下の余白をあける
   marginBottom: "70px",
+  marginTop: "50px",
 }
 // doneのスタイル
 const doneStyle = {
