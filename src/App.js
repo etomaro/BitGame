@@ -77,8 +77,8 @@ const textStyle = {
   // テキストの色を青にする
   color: "#e0ffff",
   // 下の余白をあける
-  marginBottom: "70px",
-  marginTop: "50px",
+  marginBottom: "30px",
+  marginTop: "10px",
 }
 // doneのスタイル
 const doneStyle = {
