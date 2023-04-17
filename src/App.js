@@ -194,7 +194,6 @@ const QandA = () => {
     return question;
   }
 
-
   // 数値ボタンをクリックしたときの処理
   const btnClick = (e) => {
     setInNum(seInNum + e.target.textContent);
@@ -314,7 +313,8 @@ const QandA = () => {
           <Box style={textStyle}>2進数を10進数に変えてください</Box>
           <Box fontSize="midium" mb="20px">{seCount}問目</Box>
           <Box mb={3}> 
-            {seQuestion} ->
+            {seQuestion[0]+seQuestion[1]+seQuestion[2]+seQuestion[3]+","
+              +seQuestion[4]+seQuestion[5]+seQuestion[6]+seQuestion[7]} ->
             {/* 入力 */}
             <TextField onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
             {/* 削除ボタン */}
