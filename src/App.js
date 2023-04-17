@@ -131,6 +131,9 @@ const QandA = () => {
   const [seIsBad, setIsBad] = useState(false);  // 不正解の時
   const [playCor, { stopCor, pauseCor }] = useSound(SoundCorrect);  // 正解の音
   const [playInCor, { stopInCor, pauseInCor }] = useSound(SoundInCorrect);  // 正解の音
+  const [seStartTime, setStartTime] = useState(null);  // 開始時刻
+  const [seEndMinute, setEndMinute] = useState("")  // 経過時間(分)
+  const [seEndSecond, setEndSecond] = useState("")  // 経過時間(秒)
 
   // 正答率を計算する関数
   const calcRate = () => {
@@ -202,6 +205,18 @@ const QandA = () => {
     // 問題数が最大値に達したらゲーム終了
     if (seCount === seMaxCount) {
       setIsGame(2);
+      // 計測を終了
+      const endTime = new Date();
+      // 差分を計算
+      const elapsedTime = endTime - seStartTime;
+      // 分、秒、ミリ秒に変換
+      const minutes = Math.floor(elapsedTime / 60000);
+      const seconds = Math.floor((elapsedTime % 60000) / 1000);
+
+      setEndMinute(minutes);
+      setEndSecond(seconds);
+      // 経過時間を出力
+      console.log(`経過時間: ${minutes}分 ${seconds}秒`);
     }
 
     // 問題数を1増やす
@@ -222,6 +237,8 @@ const QandA = () => {
   const startClick = () => {
     // ゲーム開始
     setIsGame(1);
+    // 計測開始
+    setStartTime(new Date)
   }
   // 正誤の表示
   const done = (value) => {
@@ -237,11 +254,6 @@ const QandA = () => {
       <>
         <DisableScroll />
         {/* ゲーム開始前の時 */}
-        <Box>{process.env.REACT_APP_ENV}</Box>
-        {
-          process.env.REACT_APP_ENV === 'PROD' &&
-          <Box>本番環境です</Box>
-        }
         {seIsGame === 0 &&
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>START</Button>
         }
@@ -302,6 +314,7 @@ const QandA = () => {
         <>
           <Box style={textStyle}>結果</Box>
           <Box style={textStyle}>正答率: {calcRate()}%</Box>
+          <Box style={textStyle}>経過時間: {seEndMinute}分{seEndSecond}秒</Box>
 
           <Box style={resultStyle}>
             <Box display="flex" flexWrap="wrap">
