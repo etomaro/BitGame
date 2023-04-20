@@ -320,7 +320,7 @@ export const QandA = () => {
             {seQuestion[0]+seQuestion[1]+seQuestion[2]+seQuestion[3]+","
               +seQuestion[4]+seQuestion[5]+seQuestion[6]+seQuestion[7]} ->
             {/* 入力 */}
-            <TextField autoFocus={true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
+            <TextField autoFocus={isMobile ? false : true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
             {/* 削除ボタン */}
             <IconButton onClick={deleteClick} aria-label="delete" color="primary">
               <DeleteIcon fontSize="large"/>
