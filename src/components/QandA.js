@@ -58,7 +58,6 @@ const startButtonStyle = {
   // 中央に配置する
   margin: "auto",
   // 上との間隔をあける
-  marginTop: "45%",
 };
 
 // inputのスタイル
@@ -211,6 +210,11 @@ export const QandA = () => {
     setInNum("");
   }
   // okボタンをクリックしたときの処理
+  window.onkeydown = function(e){
+    if (e.keyCode == 13) {
+      okClick();
+    }
+  }
   const okClick = () => {
     // 問題を10進数に変換
     const question = binaryToDecimal(seQuestion);
@@ -282,6 +286,7 @@ export const QandA = () => {
       return "";
     }
   }
+
   return (
       <>
         <DisableScroll />
@@ -315,7 +320,7 @@ export const QandA = () => {
             {seQuestion[0]+seQuestion[1]+seQuestion[2]+seQuestion[3]+","
               +seQuestion[4]+seQuestion[5]+seQuestion[6]+seQuestion[7]} ->
             {/* 入力 */}
-            <TextField onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
+            <TextField autoFocus={true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
             {/* 削除ボタン */}
             <IconButton onClick={deleteClick} aria-label="delete" color="primary">
               <DeleteIcon fontSize="large"/>
@@ -335,7 +340,8 @@ export const QandA = () => {
             <Button variant="contained" style={buttonStyle} onClick={btnClick}>9</Button>
           </Box>
           {/* okボタン */}
-          <Button variant="contained" style={okButtonStyle} onClick={okClick}>ok</Button>
+          <Button
+            variant="contained" style={okButtonStyle} onClick={okClick}>ok</Button>
           {/* 解答済みの正誤 */}
           <Box style={doneStyle}>
             <Box display="flex" flexWrap="wrap">
