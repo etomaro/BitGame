@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import useSound from 'use-sound';
 import SoundCorrect from '../correct.mp3';
 import SoundInCorrect from '../incorrect.mp3';
+import { Link, useNavigate, Redirect } from 'react-router-dom';
 
 
 // 8bit2進数を10進数に変換する関数
@@ -150,27 +151,93 @@ function DisableScroll() {
 export const QandA = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
+
+  // initial state
+  const init_state = {
+    "seInNum": "",
+    "seCount": 1,
+    "seMaxCount": 10,
+    "seIsGame": 0,
+    "seDone": [],
+    "seQuestion": "",
+    "seIsGood": false,
+    "seIsBad": false,
+    "seStartTime": null,
+    "seEndMinute": "",
+    "seEndSecond": "",
+    "seQuestionType": 0,
+    "seIsDebug": false,
+    "seFaultResult": [],
+    "seQuestionList": [],
+  }
 
   // state
-  const [seInNum, setInNum] = useState("");  // 入力された数値
-  const [seCount, setCount] = useState(1);  // 問題数
-  const [seMaxCount, setMaxCount] = useState(10);  // 問題数の最大値
-  const [seIsGame, setIsGame] = useState(0);  // ゲーム開始(0)、中(1)、終了(2)
-  const [sedone, setDone] = useState([]);   // 解答した問題の正負
-  const [seQuestion, setQuestion] = useState("")  // 問題の10進数
-  const [seIsGood, setIsGood] = useState(false);  // 正解の時
-  const [seIsBad, setIsBad] = useState(false);  // 不正解の時
-  const [playCor, { stopCor, pauseCor }] = useSound(SoundCorrect);  // 正解の音
-  const [playInCor, { stopInCor, pauseInCor }] = useSound(SoundInCorrect);  // 正解の音
-  const [seStartTime, setStartTime] = useState(null);  // 開始時刻
-  const [seEndMinute, setEndMinute] = useState("")  // 経過時間(分)
-  const [seEndSecond, setEndSecond] = useState("")  // 経過時間(秒)
+  const [seInNum, setInNum] = useState(init_state.seInNum);  // 入力された数値
+  const [seCount, setCount] = useState(init_state.seCount);  // 問題数
+  const [seMaxCount, setMaxCount] = useState(init_state.seMaxCount);  // 問題数の最大値
+  const [seIsGame, setIsGame] = useState(init_state.seIsGame);  // ゲーム開始(0)、中(1)、終了(2)
+  const [sedone, setDone] = useState(init_state.seDone);   // 解答した問題の正負
+  const [seQuestion, setQuestion] = useState(init_state.seQuestion)  // 問題の10進数
+  const [seIsGood, setIsGood] = useState(init_state.seIsGood);  // 正解の時
+  const [seIsBad, setIsBad] = useState(init_state.seIsBad);  // 不正解の時
+  const [seStartTime, setStartTime] = useState(init_state.seStartTime);  // 開始時刻
+  const [seEndMinute, setEndMinute] = useState(init_state.seEndMinute)  // 経過時間(分)
+  const [seEndSecond, setEndSecond] = useState(init_state.seEndSecond)  // 経過時間(秒)
   // 0: 8bit2進数を10進数に変換する
   // 1: 8bit2進数を10進数に変換する(上位4bitは0)
   // 2: 8bit2進数を10進数に変換する(下位4bitは0)
-  const [seQuestionType, setQuestionType] = useState(0);  // 問題の種類
-  const [seIsDebug, setIsDebug] = useState(false);  // デバッグモード
-  const [seFaultResult, setFaultResult] = useState({});  // 間違えた問題("count": question)
+  const [seQuestionType, setQuestionType] = useState(init_state.seQuestionType);  // 問題の種類
+  const [seIsDebug, setIsDebug] = useState(init_state.seIsDebug);  // デバッグモード
+  const [seFaultResult, setFaultResult] = useState(init_state.seFaultResult);  // 間違えた問題
+  const [seQuestionList, setQuestionList] = useState(init_state.seQuestionList);  // 問題のリスト
+
+  // useSound
+  const [playCor, { stopCor, pauseCor }] = useSound(SoundCorrect);  // 正解の音
+  const [playInCor, { stopInCor, pauseInCor }] = useSound(SoundInCorrect);  // 正解の音
+
+  // set initial state
+  const setInitState = () => {
+    setInNum(init_state.seInNum);
+    setCount(init_state.seCount);
+    setMaxCount(init_state.seMaxCount);
+    setIsGame(init_state.seIsGame);
+    // console.log("a")
+    // sedone = init_state.seDone;
+    // console.log("b")
+    setDone(init_state.seDone);
+    setQuestion(init_state.seQuestion);
+    setIsGood(init_state.seIsGood);
+    setIsBad(init_state.seIsBad);
+    setStartTime(init_state.seStartTime);
+    setEndMinute(init_state.seEndMinute);
+    setEndSecond(init_state.seEndSecond);
+    setQuestionType(init_state.seQuestionType);
+    setIsDebug(init_state.seIsDebug);
+    // seFaultResult = init_state.seFaultResult;
+    setFaultResult(init_state.seFaultResult);
+    // seQuestionList = init_state.seQuestionList
+    setQuestionList(init_state.seQuestionList);
+  }
+
+  // --debug print state
+  const printState = () => {
+    console.log("seInNum: " + seInNum);
+    console.log("seCount: " + seCount);
+    console.log("seMaxCount: " + seMaxCount);
+    console.log("seIsGame: " + seIsGame);
+    console.log("sedone: " + sedone);
+    console.log("seQuestion: " + seQuestion);
+    console.log("seIsGood: " + seIsGood);
+    console.log("seIsBad: " + seIsBad);
+    console.log("seStartTime: " + seStartTime);
+    console.log("seEndMinute: " + seEndMinute);
+    console.log("seEndSecond: " + seEndSecond);
+    console.log("seQuestionType: " + seQuestionType);
+    console.log("seIsDebug: " + seIsDebug);
+    console.log("seFaultResult: " + seFaultResult);
+    console.log("seQuestionList: " + seQuestionList);
+  }
 
   // 正答率を計算する関数
   const calcRate = () => {
@@ -182,41 +249,55 @@ export const QandA = () => {
     const rate = Math.round(goodCount / seMaxCount * 100);
     return rate;
   }
-  // 問題をランダムに作成する関数
-  const createQuestion = (type) => {
+  // 問題を10問ランダムに作成する関数
+  const createQuestionList = () => {
+    let questionList = [];
     let question = "";
-
-    if (type === 0) {
-      // 8bit2進数を10進数に変換する
-      // 0~255の乱数を作成
-      const num = Math.floor(Math.random() * 256);
-      // 2進数に変換
-      const binary = num.toString(2);
-      // 8桁になるように0を追加
-      question = binary.padStart(8, "0");
-    }else if (type === 1) {
-      // 8bit2進数を10進数に変換する(上位4bitは0)
-      // 0~15の乱数を作成
-      const num = Math.floor(Math.random() * 16);
-      // 2進数に変換
-      const binary = num.toString(2);
-      // 4桁になるように0を追加
-      question = binary.padStart(4, "0");
-      // 先頭に0000を追加
-      question = "0000".concat(question);
-    }else if (type === 2) {
-      // 8bit2進数を10進数に変換する(下位4bitは0)
-      // 0~15の乱数を作成
-      const num = Math.floor(Math.random() * 16);
-      // 2進数に変換
-      const binary = num.toString(2);
-      // 4桁になるように0を追加
-      question = binary.padStart(4, "0");
-      // 8桁になるように0を追加
-      question = question.concat("0000");
+    
+    if (seQuestionType === 0) {
+      // 10回ループ 
+      for (let i = 0; i < 10; i++) {
+        // 8bit2進数を10進数に変換する
+        // 0~255の乱数を作成
+        const num = Math.floor(Math.random() * 256);
+        // 2進数に変換
+        const binary = num.toString(2);
+        // 8桁になるように0を追加
+        question = binary.padStart(8, "0");
+        // 問題のリストに追加
+        questionList.push(question);
+      }
+    }else if (seQuestionType === 1) {
+      for (let i = 0; i < 10; i++) {
+        // 8bit2進数を10進数に変換する(上位4bitは0)
+        // 0~15の乱数を作成
+        const num = Math.floor(Math.random() * 16);
+        // 2進数に変換
+        const binary = num.toString(2);
+        // 4桁になるように0を追加
+        question = binary.padStart(4, "0");
+        // 先頭に0000を追加
+        question = "0000".concat(question);
+        // 問題のリストに追加
+        questionList.push(question);
+      }
+    }else if (seQuestionType === 2) {
+      for (let i = 0; i < 10; i++) {
+        // 8bit2進数を10進数に変換する(下位4bitは0)
+        // 0~15の乱数を作成
+        const num = Math.floor(Math.random() * 16);
+        // 2進数に変換
+        const binary = num.toString(2);
+        // 4桁になるように0を追加
+        question = binary.padStart(4, "0");
+        // 8桁になるように0を追加
+        question = question.concat("0000");
+        // 問題のリストに追加
+        questionList.push(question);
+      }
     };
 
-    return question;
+    return questionList;
   }
 
   // 数値ボタンをクリックしたときの処理
@@ -259,8 +340,7 @@ export const QandA = () => {
       // 不正解の場合はfalseを追加
       setDone([...sedone, false]);
       // 間違えた問題を配列に追加
-      setFaultResult({...seFaultResult, [seCount]: seQuestion});
-      console.log("不正解")
+      setFaultResult([...seFaultResult, seQuestion]);
       setIsBad(true);
       // coreectの音を鳴らす
       playInCor();
@@ -285,7 +365,7 @@ export const QandA = () => {
     // 問題数を1増やす
     setCount(seCount + 1);
     // 問題を作成
-    setQuestion(createQuestion(seQuestionType));
+    setQuestion(seQuestionList[seCount-1]);
     // 入力を初期化
     setInNum("");
 
@@ -299,19 +379,25 @@ export const QandA = () => {
   // startボタンをクリックしたときの処理
   const startClick = () => {
     // データを初期化
-    setCount(1);
-    setDone([]);
-    setInNum("");
-    setIsGood(false);
-    setIsBad(false);
+    setInitState();
 
     // ゲーム開始
     setIsGame(1);
+    // 問題を作成
+    const questionList = createQuestionList();
+    setQuestionList(questionList);
     // 最初の問題を設定
-    setQuestion(createQuestion(seQuestionType));
+    setQuestion(questionList[0]);
     // 計測開始
     setStartTime(new Date)
   }
+
+  // againClick
+  const againClick = () => {
+    setInitState();
+    printState();
+  }
+
   // 正誤の表示
   const done = (value) => {
     if (value === true) {
@@ -326,14 +412,28 @@ export const QandA = () => {
   // debugボタンをクリックしたときの処理
   const debugClick = () => {
     console.log("debug")
+    console.log("FaultResult: ", seFaultResult)
     // データを初期化
-    setCount(1);
-    setDone([]);
-    setInNum("");
-    setIsGood(false);
-    setIsBad(false);
+    setInNum(init_state.seInNum);
+    setCount(init_state.seCount);
+    // 全回間違えた問題の数
+    setMaxCount(seFaultResult.length);
+    setIsGame(1);
+    setDone(init_state.seDone);
+    setStartTime(init_state.seStartTime);
+    setEndMinute(init_state.seEndMinute);
+    setEndSecond(init_state.seEndSecond);
+    setIsDebug(true);
+    setFaultResult(init_state.seFaultResult);
 
-    console.log("fault question: ", seFaultResult);
+    // 問題を作成(前回間違えた問題のみ)
+    const new_questionList = seFaultResult
+    setQuestionList(new_questionList);
+
+    // 最初の問題を設定
+    setQuestion(new_questionList[0]);
+    // 測定開始
+    setStartTime(new Date)
   }
 
   return (
@@ -438,9 +538,9 @@ export const QandA = () => {
             </Box>
           </Box>
           <Box>
-            <Button variant="contained" style={againButtonStyle} onClick={startClick}>もう一度</Button>
+            <Button variant="contained" style={againButtonStyle} onClick={againClick}>もう一度</Button>
             {
-              (Object.keys(seFaultResult).length !== 0) &&
+              (seFaultResult.length !== 0) &&
               <Button  variant="contained" style={debugButtonStyle} onClick={debugClick}>間違えた問題</Button>
             }
           </Box>
