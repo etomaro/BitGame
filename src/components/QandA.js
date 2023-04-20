@@ -299,7 +299,7 @@ export const QandA = () => {
   // startボタンをクリックしたときの処理
   const startClick = () => {
     // データを初期化
-    setCount(0);
+    setCount(1);
     setDone([]);
     setInNum("");
     setIsGood(false);
@@ -327,7 +327,7 @@ export const QandA = () => {
   const debugClick = () => {
     console.log("debug")
     // データを初期化
-    setCount(0);
+    setCount(1);
     setDone([]);
     setInNum("");
     setIsGood(false);
