@@ -10,6 +10,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { signUp, signIn, mySignOut, isLogin } from '../firebase'
+import { Link, useNavigate, Redirect } from 'react-router-dom';
 
 // button style
 const signUpStyle = {
@@ -21,6 +22,8 @@ export const Header = () => {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const navigate = useNavigate();
+
   const handleMenu = (event) => {
     console.log("event: ", event.currentTarget)
     setAnchorEl(event.currentTarget);
@@ -29,9 +32,10 @@ export const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleLogOut = () => {
+  const handleSignOut = () => {
     mySignOut();
     // ログアウト後にリダイレクト
+    navigate('/');
   };
   const hadleSignUp = () => {
     signUp();
@@ -90,7 +94,7 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+                <MenuItem onClick={handleSignOut}>SignOut</MenuItem>
               </Menu>
             </div>
             )}
@@ -125,7 +129,7 @@ export const Header = () => {
                   onClose={handleClose}
                 >
                   <MenuItem onClick={handleClose}>Sign Up</MenuItem>
-                  <MenuItem onClick={handleLogOut}>Sign In</MenuItem>
+                  <MenuItem onClick={handleSignOut}>Sign In</MenuItem>
                 </Menu>
               </div>
               )}

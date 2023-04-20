@@ -2,6 +2,7 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import { QandA } from './components/QandA';
 import { Header } from './components/Header';
+import { Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
@@ -10,7 +11,9 @@ function App() {
         <Header />
       </header>
       <body className="App-body">
-        <QandA />
+        <Routes>
+          <Route path="/" element={<QandA />} />
+        </Routes>
       </body>
     </div>
   );
