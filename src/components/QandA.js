@@ -60,6 +60,31 @@ const startButtonStyle = {
   // 上との間隔をあける
 };
 
+// debugボタンのスタイル
+const debugButtonStyle = {
+  height: "70px",
+  // ボーダーを黒色にする
+  border: "solid 1px #000000",
+  // ボタンの文字を黒にする
+  color: "#000000",
+  // 背景をオレンジにする
+  backgroundColor: "#ff9900",
+  // 上との間隔をあける
+  marginTop: "50px",
+};
+// もう一度ボタンのスタイル
+const againButtonStyle = {
+  height: "70px",
+  // ボーダーを黒色にする
+  border: "solid 1px #000000",
+  // ボタンの文字を黒にする
+  color: "#000000",
+  // 右との間隔をあける
+  marginRight: "30px",
+  // 上との間隔をあける
+  marginTop: "50px",
+};
+
 // inputのスタイル
 const inputStyle = {
   // 背景を薄水色にする
@@ -144,6 +169,8 @@ export const QandA = () => {
   // 1: 8bit2進数を10進数に変換する(上位4bitは0)
   // 2: 8bit2進数を10進数に変換する(下位4bitは0)
   const [seQuestionType, setQuestionType] = useState(0);  // 問題の種類
+  const [seIsDebug, setIsDebug] = useState(false);  // デバッグモード
+  const [seFaultResult, setFaultResult] = useState({});  // 間違えた問題("count": question)
 
   // 正答率を計算する関数
   const calcRate = () => {
@@ -231,6 +258,8 @@ export const QandA = () => {
     } else {
       // 不正解の場合はfalseを追加
       setDone([...sedone, false]);
+      // 間違えた問題を配列に追加
+      setFaultResult({...seFaultResult, [seCount]: seQuestion});
       console.log("不正解")
       setIsBad(true);
       // coreectの音を鳴らす
@@ -269,6 +298,13 @@ export const QandA = () => {
   }
   // startボタンをクリックしたときの処理
   const startClick = () => {
+    // データを初期化
+    setCount(0);
+    setDone([]);
+    setInNum("");
+    setIsGood(false);
+    setIsBad(false);
+
     // ゲーム開始
     setIsGame(1);
     // 最初の問題を設定
@@ -285,6 +321,19 @@ export const QandA = () => {
     } else {
       return "";
     }
+  }
+
+  // debugボタンをクリックしたときの処理
+  const debugClick = () => {
+    console.log("debug")
+    // データを初期化
+    setCount(0);
+    setDone([]);
+    setInNum("");
+    setIsGood(false);
+    setIsBad(false);
+
+    console.log("fault question: ", seFaultResult);
   }
 
   return (
@@ -387,6 +436,13 @@ export const QandA = () => {
               <Box style={itemStyle}>9問: {done(sedone[8])}</Box>
               <Box style={itemStyle}>10問: {done(sedone[9])}</Box>
             </Box>
+          </Box>
+          <Box>
+            <Button variant="contained" style={againButtonStyle} onClick={startClick}>もう一度</Button>
+            {
+              (Object.keys(seFaultResult).length !== 0) &&
+              <Button  variant="contained" style={debugButtonStyle} onClick={debugClick}>間違えた問題</Button>
+            }
           </Box>
         </>
         }

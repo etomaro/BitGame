@@ -40,6 +40,11 @@ export const Header = () => {
     setAnchorEl(null);
   };
   const handleSignOut = () => {
+    // 確認用のダイアログを表示
+    if (!window.confirm('ログアウトしますか？')) {
+      setAnchorEl(null);
+      return;
+    }
     mySignOut();
     // ログアウト後にリダイレクト
     navigate('/');
