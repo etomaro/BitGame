@@ -11,6 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { signUp, signIn, mySignOut, isLogin } from '../firebase'
 import { Link, useNavigate, Redirect } from 'react-router-dom';
+import { useAuthContext } from '../contexts/AuthContext';
+import { useEffect } from 'react';
 
 // button style
 const signUpStyle = {
@@ -19,10 +21,15 @@ const signUpStyle = {
 }
 
 export const Header = () => {
-  const [auth, setAuth] = React.useState(true);
+  // const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const navigate = useNavigate();
+  // context 
+  const { user } = useAuthContext();
+  // useEffect(() => {
+  //   setAuth(user);
+  // }, [user]);
 
   const handleMenu = (event) => {
     console.log("event: ", event.currentTarget)
@@ -36,6 +43,7 @@ export const Header = () => {
     mySignOut();
     // ログアウト後にリダイレクト
     navigate('/');
+    setAnchorEl(null);
   };
   const hadleSignUp = () => {
     signUp();
@@ -45,10 +53,15 @@ export const Header = () => {
     signIn();
     setAnchorEl(null);
   }
+  // appbar style
+  const AppBarStyle = {
+    // login時は青色、logout時はグレー
+    background: user ? '#1976d2' : '#808080',
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" style={AppBarStyle}>
         {/* 横三列のマーク */}
         <Toolbar>
           <IconButton
@@ -61,10 +74,10 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Welecome ゲスト
+          Welecome {user ? user.displayName : 'Guest'}
           </Typography>
           {/* マイページ(LogIn時)*/}
-          {auth && (
+          {user && (
             <div>
               {/* 人マークのボタン */}
               <IconButton
@@ -99,7 +112,7 @@ export const Header = () => {
             </div>
             )}
             {/* マイページ(LogOut時)*/}
-            {!auth && (
+            {!user && (
               <div>
                 {/* 人マークのボタン */}
                 <IconButton
@@ -128,8 +141,8 @@ export const Header = () => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={handleClose}>Sign Up</MenuItem>
-                  <MenuItem onClick={handleSignOut}>Sign In</MenuItem>
+                  <MenuItem onClick={hadleSignUp}>Sign Up</MenuItem>
+                  <MenuItem onClick={hadleSignIn}>Sign In</MenuItem>
                 </Menu>
               </div>
               )}

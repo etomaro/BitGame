@@ -27,7 +27,7 @@ export function getAnaly() {
 
 // auth
 const provider = new GoogleAuthProvider();
-const auth = getAuth(app);
+export const auth = getAuth(app);
 // SignUp
 export const signUp = () => {
     try{
