@@ -2,7 +2,9 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { signOut } from 'firebase/auth'
+import { getFirestore } from "firebase/firestore";
 
+console.log(".env test: ", process.env.REACT_APP_ENV)
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -59,6 +61,10 @@ export const isLogin = () => {
     console.log("login state: ", result);
     return result;
 }
+
+// database
+export const db = getFirestore(app);
+
 
 
 

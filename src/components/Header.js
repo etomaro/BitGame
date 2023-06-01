@@ -59,9 +59,24 @@ export const Header = () => {
     setAnchorEl(null);
   }
   // appbar style
+
+  const AppBarStyle_func = () => {
+    // login時: stg->赤色、prod->青色
+    // logout時はグレー
+    if (user) {
+      if (process.env.REACT_APP_ENV === 'PROD') {
+        return '#1976d2';
+      } else if (process.env.REACT_APP_ENV === 'STG') {
+        return '#ff0000';
+      }
+    else {
+      return '#808080';
+      }
+    }
+  }
+
   const AppBarStyle = {
-    // login時は青色、logout時はグレー
-    background: user ? '#1976d2' : '#808080',
+    background: AppBarStyle_func(),
   };
 
   return (

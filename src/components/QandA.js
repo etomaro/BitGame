@@ -3,6 +3,7 @@ import '../App.css';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -15,6 +16,11 @@ import useSound from 'use-sound';
 import SoundCorrect from '../correct.mp3';
 import SoundInCorrect from '../incorrect.mp3';
 import { Link, useNavigate, Redirect } from 'react-router-dom';
+import { db } from '../firebase';
+import { collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValue } from 'firebase/firestore';
+import { create_history } from '../table/history_table';
+import { get_sequence } from '../table/sequence_table';
+import { EventNote } from '@mui/icons-material';
 
 
 // 8bit2進数を10進数に変換する関数
@@ -57,7 +63,7 @@ const startButtonStyle = {
   // ボタンの文字を黒にする
   color: "#000000",
   // 中央に配置する
-  margin: "auto",
+  // margin: "auto",
   // 上との間隔をあける
 };
 
@@ -239,6 +245,11 @@ export const QandA = () => {
     console.log("seQuestionList: " + seQuestionList);
   }
 
+  // DBから過去の記録を取得する
+  // useEffect(() => {
+
+
+
   // 正答率を計算する関数
   const calcRate = () => {
     // 正答数を計算
@@ -360,6 +371,14 @@ export const QandA = () => {
       setEndSecond(seconds);
       // 経過時間を出力
       console.log(`経過時間: ${minutes}分 ${seconds}秒`);
+      
+      // DBに記録を保存
+      console.log("test time")
+      console.log("type endTime: ", typeof(endTime))
+      console.log("type elapsedTime: ", typeof(elapsedTime))
+      const time_str = toString(Math.floor(elapsedTime))
+      let data = {'type': seQuestionType, 'time': elapsedTime.toString(), 'user_id': 'user_id', 'update_time': Timestamp.now()}
+      create_history(data);
     }
 
     // 問題数を1増やす
@@ -390,12 +409,13 @@ export const QandA = () => {
     setQuestion(questionList[0]);
     // 計測開始
     setStartTime(new Date)
+    // get()
   }
 
   // againClick
   const againClick = () => {
     setInitState();
-    printState();
+    // printState();
   }
 
   // 正誤の表示
@@ -411,8 +431,8 @@ export const QandA = () => {
 
   // debugボタンをクリックしたときの処理
   const debugClick = () => {
-    console.log("debug")
-    console.log("FaultResult: ", seFaultResult)
+    // console.log("debug")
+    // console.log("FaultResult: ", seFaultResult)
     // データを初期化
     setInNum(init_state.seInNum);
     setCount(init_state.seCount);
@@ -434,6 +454,51 @@ export const QandA = () => {
     setQuestion(new_questionList[0]);
     // 測定開始
     setStartTime(new Date)
+  }
+
+  // データを取得
+  const get = ()=> {
+    // データを取得
+    const usersCollectionRef = collection(db, 'history');
+    getDocs(usersCollectionRef).then((querySnapshot) => {
+      console.log(querySnapshot.docs.map((doc) => doc.data()));
+    });
+  }
+
+  // DBテスト関数(read)
+  const testDB_read = (event)=> {
+    const usersCollectionRef = collection(db, 'history');  // userテーブル
+    // query関数で絞る
+    const q = query(usersCollectionRef, where('time', '==', "30"));  
+    getDocs(q).then((querySnapshot) => {
+      // すべてのレコードを1レコードずつ出力
+      querySnapshot.docs.forEach((doc) => {
+        console.log(doc.data());
+        // タイプを出力
+        console.log(doc.id)
+        console.log(typeof(doc.data().update_time));
+      }
+      );
+    })
+  }
+  // DBテスト関数(create)
+  const testDB_create = (event)=> {
+    // const type = "3"
+    // const time = "30"
+    // const user_id = "user_id"
+
+
+    // const usersCollectionRef = collection(db, 'history');  // usersテーブル
+    // // 追加
+    // const documentRef = addDoc(usersCollectionRef, {
+    //   id: FieldValue.increment(1),
+    //   type: type,
+    //   time: time,
+    //   use_id: user_id,
+    //   update_time: Timestamp.now(),
+    // });
+
+    get_sequence();
   }
 
   return (
@@ -458,8 +523,10 @@ export const QandA = () => {
             />
           </Box>
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>START</Button>
-        </>
-        }
+          {/* 順位グリッド */}
+          {/* test */}
+          <Button onClick={testDB_create}>test</Button>
+        </>}
         {/* ゲーム中の時 */}
         {seIsGame === 1 &&
           <Box>

@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "bitgame-eacc4"
-  }
+    "default": "bitgame-eacc4",
+    "dev": "bitgame-dev"
+  },
+  "targets": {},
+  "etags": {}
 }
