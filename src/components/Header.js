@@ -13,6 +13,8 @@ import { signUp, signIn, mySignOut, isLogin } from '../firebase'
 import { Link, useNavigate, Redirect } from 'react-router-dom';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useEffect } from 'react';
+import { create_user }  from '../table/users_table';
+
 
 // button style
 const signUpStyle = {
@@ -61,19 +63,18 @@ export const Header = () => {
   // appbar style
 
   const AppBarStyle_func = () => {
-    // login時: stg->赤色、prod->青色
+    // login時: stg->青色、prod->赤色
     // logout時はグレー
     if (user) {
       if (process.env.REACT_APP_ENV === 'PROD') {
-        return '#1976d2';
-      } else if (process.env.REACT_APP_ENV === 'STG') {
         return '#ff0000';
+      } else if (process.env.REACT_APP_ENV === 'STG') {
+        return '#1976d2';
       }
-    else {
+    } else {
       return '#808080';
       }
     }
-  }
 
   const AppBarStyle = {
     background: AppBarStyle_func(),

@@ -21,6 +21,7 @@ import { collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValu
 import { create_history } from '../table/history_table';
 import { get_sequence } from '../table/sequence_table';
 import { EventNote } from '@mui/icons-material';
+import { useAuthContext } from '../contexts/AuthContext';
 
 
 // 8bit2進数を10進数に変換する関数
@@ -202,6 +203,9 @@ export const QandA = () => {
   const [playCor, { stopCor, pauseCor }] = useSound(SoundCorrect);  // 正解の音
   const [playInCor, { stopInCor, pauseInCor }] = useSound(SoundInCorrect);  // 正解の音
 
+  // context 
+  const { user } = useAuthContext();
+
   // set initial state
   const setInitState = () => {
     setInNum(init_state.seInNum);
@@ -330,11 +334,12 @@ export const QandA = () => {
   }
   // okボタンをクリックしたときの処理
   window.onkeydown = function(e){
-    if (e.keyCode == 13) {
+    if (e.keyCode == 13 & seIsGame === 1 ) {
       okClick();
     }
   }
   const okClick = () => {
+    console.log(`ok button click!\nsecount: ${seCount}\nseMaxCount: ${seMaxCount}`)
     // 問題を10進数に変換
     const question = binaryToDecimal(seQuestion);
     // questionを文字に変換
@@ -358,6 +363,7 @@ export const QandA = () => {
     }
     // 問題数が最大値に達したらゲーム終了
     if (seCount === seMaxCount) {
+      console.log("game done start")
       setIsGame(2);
       // 計測を終了
       const endTime = new Date();
@@ -371,14 +377,24 @@ export const QandA = () => {
       setEndSecond(seconds);
       // 経過時間を出力
       console.log(`経過時間: ${minutes}分 ${seconds}秒`);
-      
+
+      // 正答数を取得
+      const q_correct_num = sedone.filter((value) => {
+        return value;
+      }).length.toString()
       // DBに記録を保存
-      console.log("test time")
-      console.log("type endTime: ", typeof(endTime))
-      console.log("type elapsedTime: ", typeof(elapsedTime))
-      const time_str = toString(Math.floor(elapsedTime))
-      let data = {'type': seQuestionType, 'time': elapsedTime.toString(), 'user_id': 'user_id', 'update_time': Timestamp.now()}
+      const data = {
+        'type': seQuestionType.toString(),
+        'time': elapsedTime.toString(),
+        'user_id': user ? user.uid : "NO_LOGIN_USER",
+        'q_num': seMaxCount.toString(),
+        'q_correct_num': q_correct_num,
+        'q_poc': calcRate().toString(),
+        'is_debug': seIsDebug,
+      }
       create_history(data);
+
+      console.log("game done end")
     }
 
     // 問題数を1増やす
@@ -557,7 +573,7 @@ export const QandA = () => {
           </Box>
           {/* okボタン */}
           <Button
-            variant="contained" style={okButtonStyle} onClick={okClick}>ok</Button>
+            variant="contained" disabled={seIsGame !== 1} style={okButtonStyle} onClick={okClick}>ok</Button>
           {/* 解答済みの正誤 */}
           <Box style={doneStyle}>
             <Box display="flex" flexWrap="wrap">

@@ -3,8 +3,8 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { signOut } from 'firebase/auth'
 import { getFirestore } from "firebase/firestore";
+import { create_users }  from './table/users_table';
 
-console.log(".env test: ", process.env.REACT_APP_ENV)
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -33,7 +33,13 @@ export const auth = getAuth(app);
 // SignUp
 export const signUp = () => {
     try{
-        signInWithPopup(auth, provider);
+        signInWithPopup(auth, provider).then((result) => {
+            console.log("signUp result: ", result.user.uid);
+            // databaseにuidとdisplayNameを登録
+            create_users({user_id: result.user.uid, name: result.user.displayName})
+        }).cahtch((error) => {
+            Error(error);
+        })
     } catch (error) {
         console.log(error);
     }
