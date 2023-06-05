@@ -1,6 +1,7 @@
-import { doc, writeBatch, collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValue, runTransaction } from 'firebase/firestore';
+import { orderBy, limit, doc, writeBatch, collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValue, runTransaction } from 'firebase/firestore';
 import { get_sequence } from './sequence_table';
 import { db } from '../firebase';
+import { get_users_name } from './users_table';
 
 
 export const create_history = async (data) => {
@@ -55,3 +56,66 @@ export const create_history = async (data) => {
     await batch.commit();
 
 }
+
+export const get_history = async (q_type, question_type) => {
+    console.log("debug get_history func start")
+    console.log("q_type: ", q_type)
+
+    // --- q_type ---
+    // all_user_record: 全ユーザーの記録を取得
+
+    const historyRef = collection(db, 'history');  // historyテーブル
+    
+    let q = "";
+    if (q_type === "all_user_record") {
+        q = query(historyRef, 
+            where("type", "==", question_type), // typeがquestion_typeのものを絞り込む
+            where("q_poc", "==", "100"), // q_pocが100のものを絞り込む
+            where("is_debug", "==", false), // is_debugがfalseのものを絞り込む
+            orderBy("time"), // timeの小さい順に並び替える
+            limit(10) // 最大10件まで取得する
+        );
+    }
+    const querySnapshot = await getDocs(q);
+    const result = querySnapshot.docs.map(doc => doc.data());
+    console.log("result: ", result)
+    
+    // --- dataを整形(rank, name, time, update_time) ---
+    // nameを取得
+    // data.user_idが"NO_LOGIN_USER"でない要素だけを抽出する
+    const filteredResult = result.filter((data) => data.user_id !== "NO_LOGIN_USER");
+    // filteredResultの各要素からuser_idを取り出して新しい配列にする
+    const user_id_list = filteredResult.map((data) => data.user_id);
+    console.log("user_id_list: ", user_id_list)
+
+    const user_name_obj = await get_users_name(user_id_list);
+    console.log("user_name_obj: ", user_name_obj)
+    user_name_obj.forEach((data) => {
+        console.log("data: ", data)
+        console.log("type: ", typeof(data))
+    })
+
+    const get_history_list = []
+    result.forEach((data, index) => {
+        // get_hisotry_listにオブジェクトを追加する
+        console.log("test")
+        console.log("data.user_id: ", data.user_id)
+        console.log("type: ", typeof(data.user_id))
+        console.log("user_name_obj[data.user_id]: ", user_name_obj[data.user_id])
+        const name = data.user_id === "NO_LOGIN_USER" ? "NO_LOGIN_USER" : user_name_obj[data.user_id];
+        const new_obj = {
+            rank: `${index + 1}`,
+            name: name,
+            time: `${data.time}`,
+            update_time: `${data.update_time}`
+        }
+
+        get_history_list.push(new_obj)
+    })
+
+    console.log("get_history_list: ", get_history_list)
+
+
+    
+}
+

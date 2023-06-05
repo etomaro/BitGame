@@ -18,10 +18,26 @@ import SoundInCorrect from '../incorrect.mp3';
 import { Link, useNavigate, Redirect } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValue } from 'firebase/firestore';
-import { create_history } from '../table/history_table';
+import { create_history, get_history } from '../table/history_table';
 import { get_sequence } from '../table/sequence_table';
 import { EventNote } from '@mui/icons-material';
 import { useAuthContext } from '../contexts/AuthContext';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
+import { tableCellClasses } from '@mui/material/TableCell';
+import { blue } from '@mui/material/colors';
+import { get_users_name } from '../table/users_table';
 
 
 // 8bit2進数を10進数に変換する関数
@@ -29,112 +45,6 @@ function binaryToDecimal(binary) {
   return binary.split('').reverse().reduce((acc, curr, index) => {
     return acc + curr * Math.pow(2, index);
   }, 0);
-}
-
-
-// 数値ボタンのスタイル
-const buttonStyle = {
-  width: "calc(100% / 5)",
-  height: "100px",
-  // 背景を薄水色にする
-  backgroundColor: "#e0ffff",
-  // ボーダーを黒色にする
-  border: "solid 1px #000000",
-  // ボタンの文字を黒にする
-  color: "#000000",
-};
-// okボタンのスタイル
-const okButtonStyle = {
-  width: "calc(100% / 7)",
-  height: "70px",
-  // ボーダーを黒色にする
-  border: "solid 1px #000000",
-  // ボタンの文字を黒にする
-  color: "#000000",
-  // 上との間隔をあける
-  marginTop: "50px",
-};
-
-// startボタンのスタイル
-const startButtonStyle = {
-  width: "calc(100% / 7)",
-  height: "70px",
-  // ボーダーを黒色にする
-  border: "solid 1px #000000",
-  // ボタンの文字を黒にする
-  color: "#000000",
-  // 中央に配置する
-  // margin: "auto",
-  // 上との間隔をあける
-};
-
-// debugボタンのスタイル
-const debugButtonStyle = {
-  height: "70px",
-  // ボーダーを黒色にする
-  border: "solid 1px #000000",
-  // ボタンの文字を黒にする
-  color: "#000000",
-  // 背景をオレンジにする
-  backgroundColor: "#ff9900",
-  // 上との間隔をあける
-  marginTop: "50px",
-};
-// もう一度ボタンのスタイル
-const againButtonStyle = {
-  height: "70px",
-  // ボーダーを黒色にする
-  border: "solid 1px #000000",
-  // ボタンの文字を黒にする
-  color: "#000000",
-  // 右との間隔をあける
-  marginRight: "30px",
-  // 上との間隔をあける
-  marginTop: "50px",
-};
-
-// inputのスタイル
-const inputStyle = {
-  // 背景を薄水色にする
-  backgroundColor: "#e0ffff",
-  // ボタンの文字を黒にする
-  color: "#000000",
-  height: "50px",
-  marginBottom: "30px",
-};
-// textのスタイル
-const textStyle = {
-  // フォントサイズを大きくする
-  fontSize: "25px",
-  // テキストの色を青にする
-  color: "#e0ffff",
-  // 下の余白をあける
-  marginBottom: "30px",
-  marginTop: "10px",
-}
-// doneのスタイル
-const doneStyle = {
-  // 画面の下に固定する
-  position: "fixed",
-  bottom: "30px",
-}
-// resultのスタイル
-const resultStyle = {
-  // 画面の下に固定する
-}
-
-const itemStyle = {
-  width: "70px",
-  // テキストを左寄せにする
-  textAlign: "left",
-  // フォントサイズ
-  fontSize: "15px",
-};
-const choiceStyle = {
-  // テキストを左寄せにする
-  textAlign: "left",
-  // 縦に並べる
-  flexDirection: "column",
 }
 
 
@@ -249,8 +159,112 @@ export const QandA = () => {
     console.log("seQuestionList: " + seQuestionList);
   }
 
-  // DBから過去の記録を取得する
-  // useEffect(() => {
+  // 数値ボタンのスタイル
+  const buttonStyle = {
+    width: "calc(100% / 5)",
+    height: "100px",
+    // 背景を薄水色にする
+    backgroundColor: "#e0ffff",
+    // ボーダーを黒色にする
+    border: "solid 1px #000000",
+    // ボタンの文字を黒にする
+    color: "#000000",
+  };
+  // okボタンのスタイル
+  const okButtonStyle = {
+    width: "calc(100% / 7)",
+    height: "70px",
+    // ボーダーを黒色にする
+    border: "solid 1px #000000",
+    // ボタンの文字を黒にする
+    color: "#000000",
+    // 上との間隔をあける
+    marginTop: "50px",
+  };
+
+  // startボタンのスタイル
+  const startButtonStyle = {
+    width: "calc(100% / 7)",
+    height: "70px",
+    // ボーダーを黒色にする
+    border: "solid 1px #000000",
+    // ボタンの文字を黒にする
+    color: "#000000",
+    // 下との間隔をあける
+    marginBottom: isMobile ? "10px" : "50px",
+  };
+
+  // debugボタンのスタイル
+  const debugButtonStyle = {
+    height: "70px",
+    // ボーダーを黒色にする
+    border: "solid 1px #000000",
+    // ボタンの文字を黒にする
+    color: "#000000",
+    // 背景をオレンジにする
+    backgroundColor: "#ff9900",
+    // 上との間隔をあける
+    marginTop: "50px",
+  };
+  // もう一度ボタンのスタイル
+  const againButtonStyle = {
+    height: "70px",
+    // ボーダーを黒色にする
+    border: "solid 1px #000000",
+    // ボタンの文字を黒にする
+    color: "#000000",
+    // 右との間隔をあける
+    marginRight: "30px",
+    // 上との間隔をあける
+    marginTop: "50px",
+  };
+
+  // inputのスタイル
+  const inputStyle = {
+    // 背景を薄水色にする
+    backgroundColor: "#e0ffff",
+    // ボタンの文字を黒にする
+    color: "#000000",
+    height: "50px",
+    marginBottom: "30px",
+  };
+  // textのスタイル
+  const textStyle = {
+    // フォントサイズを大きくする
+    fontSize: "25px",
+    // テキストの色を青にする
+    color: "#e0ffff",
+    // 下の余白をあける
+    marginBottom: "30px",
+    marginTop: "10px",
+  }
+  // doneのスタイル
+  const doneStyle = {
+    // 画面の下に固定する
+    position: "fixed",
+    bottom: "30px",
+  }
+  // resultのスタイル
+  const resultStyle = {
+    // 画面の下に固定する
+  }
+
+  const itemStyle = {
+    width: "70px",
+    // テキストを左寄せにする
+    textAlign: "left",
+    // フォントサイズ
+    fontSize: "15px",
+  };
+  const choiceStyle = {
+    // テキストを左寄せにする
+    textAlign: "left",
+    // 縦に並べる
+    flexDirection: "column",
+    // 下との間隔をあける
+    marginBottom: isMobile ? "30px" : "50px",
+
+  }
 
 
 
@@ -385,7 +399,7 @@ export const QandA = () => {
       // DBに記録を保存
       const data = {
         'type': seQuestionType.toString(),
-        'time': elapsedTime.toString(),
+        'time': elapsedTime,
         'user_id': user ? user.uid : "NO_LOGIN_USER",
         'q_num': seMaxCount.toString(),
         'q_correct_num': q_correct_num,
@@ -481,22 +495,7 @@ export const QandA = () => {
     });
   }
 
-  // DBテスト関数(read)
-  const testDB_read = (event)=> {
-    const usersCollectionRef = collection(db, 'history');  // userテーブル
-    // query関数で絞る
-    const q = query(usersCollectionRef, where('time', '==', "30"));  
-    getDocs(q).then((querySnapshot) => {
-      // すべてのレコードを1レコードずつ出力
-      querySnapshot.docs.forEach((doc) => {
-        console.log(doc.data());
-        // タイプを出力
-        console.log(doc.id)
-        console.log(typeof(doc.data().update_time));
-      }
-      );
-    })
-  }
+
   // DBテスト関数(create)
   const testDB_create = (event)=> {
     // const type = "3"
@@ -516,10 +515,71 @@ export const QandA = () => {
 
     get_sequence();
   }
+  const testRow = [
+    {rank: 1, name: "hoge", time: "30", update_time: "2021/10/10"},
+    {rank: 2, name: "hoge", time: "30", update_time: "2021/10/10"},
+    {rank: 3, name: "hoge", time: "30", update_time: "2021/10/10"},
+    {rank: 4, name: "hoge", time: "30", update_time: "2021/10/10"},
+  ]
+  // tableのスタイル
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: blue[700],
+      color: theme.palette.common.black,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+
+  const tableStyle = {
+    // スマホの時縦並びにする
+    flexDirection: isMobile ? "column" : "row",
+    // 横並びにする
+    display: "flex",
+    // 上の余白をあける
+    marginTop: "30px",
+    // 間隔をあける
+    gap: isMobile ? "30px" : "60px",
+  }
+  const tableTitleStyle_1 = {
+    // 左図に寄せる
+    textAlign: "left",
+    // 左の余白をあける
+    marginLeft: "5px",
+    // フォントを小さくする
+    fontSize: "15px",
+    color: "#ff0000"
+  }
+  const tableTitleStyle_2 = {
+    // 左図に寄せる
+    textAlign: "left",
+    // 左の余白をあける
+    marginLeft: "5px",
+    // フォントを小さくする
+    fontSize: "15px",
+  }
+
+  // test
+  const testDB_read = ()=> {
+    get_history("all_user_record", seQuestionType.toString())
+    // get_users_name(["nO9xPKFiibdAdkXcii8NxdPkRxA3", "ID_A"])
+  }
 
   return (
       <>
-        <DisableScroll />
+        {/* PCの時スクロール禁止 */}
+        {(!isMobile) && <DisableScroll />}
         {/* ゲーム開始前の時 */}
         {seIsGame === 0 &&
         <>
@@ -539,9 +599,96 @@ export const QandA = () => {
             />
           </Box>
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>START</Button>
-          {/* 順位グリッド */}
-          {/* test */}
-          <Button onClick={testDB_create}>test</Button>
+          <Button onClick={testDB_read}>DB read</Button>
+          {/* hisotryList */}
+          <Box style={tableStyle}>
+          {/* 全ユーザーのレコード記録 */}
+          <Box>
+            <Box style={tableTitleStyle_1}>全ユーザーのレコード記録</Box>
+            <TableContainer component={Paper}>
+                <Table aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell align="center">順位</StyledTableCell>
+                      <StyledTableCell align="center">name</StyledTableCell>
+                      <StyledTableCell align="center">time</StyledTableCell>
+                      <StyledTableCell align="center">更新日</StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {testRow.map((row) => (
+                      // 1位の時は色を変える
+                      (row.rank===1) ? 
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      : 
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+            {/* すべてのユーザーの直近10件のhistory */}
+            <Box>
+              <Box style={tableTitleStyle_2}>すべてのユーザーの直近の記録</Box>
+              <TableContainer component={Paper}>
+                <Table aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell align="center">順位</StyledTableCell>
+                      <StyledTableCell align="center">name</StyledTableCell>
+                      <StyledTableCell align="center">time</StyledTableCell>
+                      <StyledTableCell align="center">更新日</StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {testRow.map((row) => (
+                      <StyledTableRow key={row.rank}>
+                        <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                        <StyledTableCell align="center">{row.name}</StyledTableCell>
+                        <StyledTableCell align="center">{row.time}</StyledTableCell>
+                        <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+            {/* ログインアカウントのhistory */}
+            <Box>
+              <Box style={tableTitleStyle_2}>あなたの記録</Box>
+              <TableContainer component={Paper}>
+                <Table aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell align="center">順位</StyledTableCell>
+                      <StyledTableCell align="center">time</StyledTableCell>
+                      <StyledTableCell align="center">更新日</StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {testRow.map((row) => (
+                      <StyledTableRow key={row.rank}>
+                        <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                        <StyledTableCell align="center">{row.time}</StyledTableCell>
+                        <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </Box>
+
         </>}
         {/* ゲーム中の時 */}
         {seIsGame === 1 &&
