@@ -1,7 +1,7 @@
 import { orderBy, limit, doc, writeBatch, collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValue, runTransaction } from 'firebase/firestore';
 import { get_sequence } from './sequence_table';
 import { db } from '../firebase';
-import { get_users_name } from './users_table';
+import { get_user_name, test, get_users_name } from './users_table';
 
 
 export const create_history = async (data) => {
@@ -88,17 +88,23 @@ export const get_history = async (q_type, question_type) => {
     const user_id_list = filteredResult.map((data) => data.user_id);
     console.log("user_id_list: ", user_id_list)
 
-    const user_name_obj = await get_users_name(user_id_list);
+    // user_id_listからuser_nameを取得
+    // const user_name_obj = {}
+    // user_id_list.forEach((user_id) => {
+    //     const user_name = get_user_name(user_id)
+    //     user_name_obj[user_id] = user_name
+    // })
+    const user_name_obj = await get_users_name(user_id_list)
+
+    
+
+    // user_name_objの中身を確認
     console.log("user_name_obj: ", user_name_obj)
-    user_name_obj.forEach((data) => {
-        console.log("data: ", data)
-        console.log("type: ", typeof(data))
-    })
+    console.log("type: ", typeof(user_name_obj))
 
     const get_history_list = []
     result.forEach((data, index) => {
         // get_hisotry_listにオブジェクトを追加する
-        console.log("test")
         console.log("data.user_id: ", data.user_id)
         console.log("type: ", typeof(data.user_id))
         console.log("user_name_obj[data.user_id]: ", user_name_obj[data.user_id])
