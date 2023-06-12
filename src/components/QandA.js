@@ -615,6 +615,7 @@ export const QandA = () => {
     marginTop: "30px",
     // 間隔をあける
     gap: isMobile ? "30px" : "60px",
+    marginBottom: "30px",
   }
   const tableTitleStyle_1 = {
     // 左図に寄せる
