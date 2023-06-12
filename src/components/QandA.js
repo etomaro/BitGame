@@ -95,7 +95,7 @@ export const QandA = () => {
     {"rank": "5", "name": "", "time": "", "update_time": ""}
   ];
   const init_allHistory = [
-    {"rank": "1", "name": "a", "time": "", "poc": "", "update_time": ""},
+    {"rank": "1", "name": "", "time": "", "poc": "", "update_time": ""},
     {"rank": "2", "name": "", "time": "", "poc": "", "update_time": ""},
     {"rank": "3", "name": "", "time": "", "poc": "", "update_time": ""},
     {"rank": "4", "name": "", "time": "", "poc": "", "update_time": ""},
@@ -636,7 +636,7 @@ export const QandA = () => {
 
   // test
   const testDB_read = ()=> {
-    
+
   }
 
   return (
@@ -663,7 +663,7 @@ export const QandA = () => {
           </Box>
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>GAME START</Button>
           {/* テスト用ボタン */}
-          <Button onClick={testDB_read}>DB read</Button>
+          {/* <Button onClick={testDB_read}>DB read</Button> */}
           {/* hisotryList */}
           <Box style={tableStyle}>
           {/* 全ユーザーのレコード記録 */}
