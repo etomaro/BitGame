@@ -484,6 +484,9 @@ export const QandA = () => {
   const againClick = () => {
     setInitState();
     // printState();
+    // DBから記録を取得
+    setHistory();
+    user && setHistory_login(user.uid);
   }
 
   // 正誤の表示
@@ -921,7 +924,7 @@ export const QandA = () => {
             </Box>
           </Box>
           <Box>
-            <Button variant="contained" style={againButtonStyle} onClick={againClick}>もう一度</Button>
+            <Button variant="contained" style={againButtonStyle} onClick={againClick}>戻る</Button>
             {
               (seFaultResult.length !== 0) &&
               <Button  variant="contained" style={debugButtonStyle} onClick={debugClick}>間違えた問題</Button>
