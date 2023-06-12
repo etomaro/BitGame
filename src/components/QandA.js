@@ -47,7 +47,6 @@ function binaryToDecimal(binary) {
   }, 0);
 }
 
-
 // 画面スクロールを禁止にするコンポーネント
 function DisableScroll() {
   useEffect(() => {
@@ -88,6 +87,27 @@ export const QandA = () => {
     "seFaultResult": [],
     "seQuestionList": [],
   }
+  const init_allRecHistory = [
+    {"rank": "1", "name": "", "time": "", "update_time": ""},
+    {"rank": "2", "name": "", "time": "", "update_time": ""},
+    {"rank": "3", "name": "", "time": "", "update_time": ""},
+    {"rank": "4", "name": "", "time": "", "update_time": ""},
+    {"rank": "5", "name": "", "time": "", "update_time": ""}
+  ];
+  const init_allHistory = [
+    {"rank": "1", "name": "a", "time": "", "poc": "", "update_time": ""},
+    {"rank": "2", "name": "", "time": "", "poc": "", "update_time": ""},
+    {"rank": "3", "name": "", "time": "", "poc": "", "update_time": ""},
+    {"rank": "4", "name": "", "time": "", "poc": "", "update_time": ""},
+    {"rank": "5", "name": "", "time": "", "poc": "", "update_time": ""}
+  ];
+  const init_yourRecHistory = [
+    {"rank": "1", "time": "", "update_time": ""},
+    {"rank": "2", "time": "", "update_time": ""},
+    {"rank": "3", "time": "", "update_time": ""},
+    {"rank": "4", "time": "", "update_time": ""},
+    {"rank": "5", "time": "", "update_time": ""}
+  ];
 
   // state
   const [seInNum, setInNum] = useState(init_state.seInNum);  // 入力された数値
@@ -108,6 +128,16 @@ export const QandA = () => {
   const [seIsDebug, setIsDebug] = useState(init_state.seIsDebug);  // デバッグモード
   const [seFaultResult, setFaultResult] = useState(init_state.seFaultResult);  // 間違えた問題
   const [seQuestionList, setQuestionList] = useState(init_state.seQuestionList);  // 問題のリスト
+  // historyデータ
+  const [allRecHistory_zero, setAllRecHistory_zero] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:0)
+  const [allRecHistory_one, setAllRecHistory_one] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:1)
+  const [allRecHistory_two, setAllRecHistory_two] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:2)
+  const [allHistory_zero, setAllHistory_zero] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:0)
+  const [allHistory_one, setAllHistory_one] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:1)
+  const [allHistory_two, setAllHistory_two] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:2)
+  const [yourRecHistory_zero, setyourRecHistory_zero] = useState(init_yourRecHistory);  // 自分の記録(type:0)
+  const [yourRecHistory_one, setyourRecHistory_one] = useState(init_yourRecHistory);  // 自分の記録(type:1)
+  const [yourRecHistory_two, setyourRecHistory_two] = useState(init_yourRecHistory);  // 自分の記録(type:2)
 
   // useSound
   const [playCor, { stopCor, pauseCor }] = useSound(SoundCorrect);  // 正解の音
@@ -158,6 +188,16 @@ export const QandA = () => {
     console.log("seFaultResult: " + seFaultResult);
     console.log("seQuestionList: " + seQuestionList);
   }
+
+  // use effect
+  useEffect(() => {
+    // 過去の記録データをセットする
+    setHistory();
+  }, []);
+
+  useEffect(() => {
+    user && setHistory_login(user.uid);
+  }, [user])
 
   // 数値ボタンのスタイル
   const buttonStyle = {
@@ -353,7 +393,7 @@ export const QandA = () => {
     }
   }
   const okClick = () => {
-    console.log(`ok button click!\nsecount: ${seCount}\nseMaxCount: ${seMaxCount}`)
+    // console.log(`ok button click!\nsecount: ${seCount}\nseMaxCount: ${seMaxCount}`)
     // 問題を10進数に変換
     const question = binaryToDecimal(seQuestion);
     // questionを文字に変換
@@ -362,7 +402,7 @@ export const QandA = () => {
     if (seInNum === questionStr) {
       // 正解した問題を配列に追加
       setDone([...sedone, true]);
-      console.log("正解")
+      // console.log("正解")
       setIsGood(true);
       // correctの音を鳴らす
       playCor();
@@ -377,7 +417,7 @@ export const QandA = () => {
     }
     // 問題数が最大値に達したらゲーム終了
     if (seCount === seMaxCount) {
-      console.log("game done start")
+      // console.log("game done start")
       setIsGame(2);
       // 計測を終了
       const endTime = new Date();
@@ -390,7 +430,7 @@ export const QandA = () => {
       setEndMinute(minutes);
       setEndSecond(seconds);
       // 経過時間を出力
-      console.log(`経過時間: ${minutes}分 ${seconds}秒`);
+      // console.log(`経過時間: ${minutes}分 ${seconds}秒`);
 
       // 正答数を取得
       const q_correct_num = sedone.filter((value) => {
@@ -408,7 +448,7 @@ export const QandA = () => {
       }
       create_history(data);
 
-      console.log("game done end")
+      // console.log("game done end")
     }
 
     // 問題数を1増やす
@@ -427,8 +467,6 @@ export const QandA = () => {
   }
   // startボタンをクリックしたときの処理
   const startClick = () => {
-    // データを初期化
-    setInitState();
 
     // ゲーム開始
     setIsGame(1);
@@ -491,30 +529,56 @@ export const QandA = () => {
     // データを取得
     const usersCollectionRef = collection(db, 'history');
     getDocs(usersCollectionRef).then((querySnapshot) => {
-      console.log(querySnapshot.docs.map((doc) => doc.data()));
+      // console.log(querySnapshot.docs.map((doc) => doc.data()));
     });
   }
 
+  // 過去のレコード記録を取得してstateに保存する(Loginしてなくて取得できるデータ)
+  function setHistory() {
+    const user_id = "NO_LOGIN_USER"
+    // 1. 全ユーザーのレコード記録を取得
+    get_history("all_record", "0", user_id).then((result) => {
+      setAllRecHistory_zero(result);
+    });
+    get_history("all_record", "1", user_id).then((result) => {
+      setAllRecHistory_one(result);
+    });
+    get_history("all_record", "2", user_id).then((result) => {
+      setAllRecHistory_two(result);
+    });
+    // 2. 全ユーザーの直近の記録を取得
+    get_history("all", "0", user_id).then((result) => {
+      setAllHistory_zero(result);
+    });
+    get_history("all", "1", user_id).then((result) => {
+      setAllHistory_one(result);
+    });
+    get_history("all", "2", user_id).then((result) => {
+      setAllHistory_two(result);
+    });
+  }
+
+  // 過去のレコード記録を取得してstateに保存する(Loginして取得できるデータ)
+  function setHistory_login(user_id) {
+    // 3. 自分の記録を取得
+    if (user_id !== "NO_LOGIN_USER") {
+      get_history("your_record", "0", user_id).then((result) => {
+        setyourRecHistory_zero(result);
+      });
+      get_history("your_record", "1", user_id).then((result) => {
+        setyourRecHistory_one(result);
+      });
+      get_history("your_record", "2", user_id).then((result) => {
+        setyourRecHistory_two(result);
+      });
+    }
+    }
 
   // DBテスト関数(create)
   const testDB_create = (event)=> {
-    // const type = "3"
-    // const time = "30"
-    // const user_id = "user_id"
-
-
-    // const usersCollectionRef = collection(db, 'history');  // usersテーブル
-    // // 追加
-    // const documentRef = addDoc(usersCollectionRef, {
-    //   id: FieldValue.increment(1),
-    //   type: type,
-    //   time: time,
-    //   use_id: user_id,
-    //   update_time: Timestamp.now(),
-    // });
-
     get_sequence();
   }
+
   const testRow = [
     {rank: 1, name: "hoge", time: "30", update_time: "2021/10/10"},
     {rank: 2, name: "hoge", time: "30", update_time: "2021/10/10"},
@@ -572,8 +636,7 @@ export const QandA = () => {
 
   // test
   const testDB_read = ()=> {
-    get_history("all_user_record", seQuestionType.toString())
-    // get_users_name(["nO9xPKFiibdAdkXcii8NxdPkRxA3", "ID_A"])
+    
   }
 
   return (
@@ -598,40 +661,81 @@ export const QandA = () => {
               label="2進数 -> 10進数(下位4bitは0)"
             />
           </Box>
-          <Button variant="contained" style={startButtonStyle} onClick={startClick}>START</Button>
+          <Button variant="contained" style={startButtonStyle} onClick={startClick}>GAME START</Button>
+          {/* テスト用ボタン */}
           <Button onClick={testDB_read}>DB read</Button>
           {/* hisotryList */}
           <Box style={tableStyle}>
           {/* 全ユーザーのレコード記録 */}
           <Box>
-            <Box style={tableTitleStyle_1}>全ユーザーのレコード記録</Box>
+            <Box style={tableTitleStyle_1}>全ユーザーのレコード記録(正答率100%のみ)</Box>
             <TableContainer component={Paper}>
                 <Table aria-label="customized table">
                   <TableHead>
                     <TableRow>
                       <StyledTableCell align="center">順位</StyledTableCell>
-                      <StyledTableCell align="center">name</StyledTableCell>
-                      <StyledTableCell align="center">time</StyledTableCell>
-                      <StyledTableCell align="center">更新日</StyledTableCell>
+                      <StyledTableCell align="center">名前</StyledTableCell>
+                      <StyledTableCell align="center">タイム</StyledTableCell>
+                      <StyledTableCell align="center">記録日</StyledTableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {testRow.map((row) => (
-                      // 1位の時は色を変える
-                      (row.rank===1) ? 
-                        <StyledTableRow key={row.rank}>
-                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
-                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
-                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
-                          <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
-                        </StyledTableRow>
-                      : 
-                        <StyledTableRow key={row.rank}>
-                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
-                          <StyledTableCell align="center">{row.name}</StyledTableCell>
-                          <StyledTableCell align="center">{row.time}</StyledTableCell>
-                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
-                        </StyledTableRow>
+                    {/* type=0の時 */}
+                    {seQuestionType === 0 &&
+                      allRecHistory_zero.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                    ))}
+                    {/* type=1の時 */}
+                    {seQuestionType === 1 &&
+                      allRecHistory_one.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                    ))}
+                    {/* type=2の時 */}
+                    {seQuestionType === 2 &&
+                      allRecHistory_two.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
                     ))}
                   </TableBody>
                 </Table>
@@ -639,50 +743,98 @@ export const QandA = () => {
             </Box>
             {/* すべてのユーザーの直近10件のhistory */}
             <Box>
-              <Box style={tableTitleStyle_2}>すべてのユーザーの直近の記録</Box>
+              <Box style={tableTitleStyle_2}>全ユーザーの直近の記録</Box>
               <TableContainer component={Paper}>
                 <Table aria-label="customized table">
                   <TableHead>
                     <TableRow>
-                      <StyledTableCell align="center">順位</StyledTableCell>
-                      <StyledTableCell align="center">name</StyledTableCell>
-                      <StyledTableCell align="center">time</StyledTableCell>
-                      <StyledTableCell align="center">更新日</StyledTableCell>
+                      <StyledTableCell align="center">名前</StyledTableCell>
+                      <StyledTableCell align="center">タイム</StyledTableCell>
+                      <StyledTableCell align="center">正答率</StyledTableCell>
+                      <StyledTableCell align="center">記録日</StyledTableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {testRow.map((row) => (
-                      <StyledTableRow key={row.rank}>
-                        <StyledTableCell align="center">{row.rank}</StyledTableCell>
-                        <StyledTableCell align="center">{row.name}</StyledTableCell>
-                        <StyledTableCell align="center">{row.time}</StyledTableCell>
-                        <StyledTableCell align="center">{row.update_time}</StyledTableCell>
-                      </StyledTableRow>
-                    ))}
+                    {/* type=0の時 */}
+                    {seQuestionType === 0 &&
+                      allHistory_zero.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=1の時 */}
+                    {seQuestionType === 1 &&
+                      allHistory_one.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      )) 
+                    }
+                    {/* type=0の時 */}
+                    {seQuestionType === 2 &&
+                      allHistory_two.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
                   </TableBody>
                 </Table>
               </TableContainer>
             </Box>
             {/* ログインアカウントのhistory */}
             <Box>
-              <Box style={tableTitleStyle_2}>あなたの記録</Box>
+              <Box style={tableTitleStyle_2}>あなたのレコード記録(正答率100%のみ)</Box>
               <TableContainer component={Paper}>
                 <Table aria-label="customized table">
                   <TableHead>
                     <TableRow>
                       <StyledTableCell align="center">順位</StyledTableCell>
-                      <StyledTableCell align="center">time</StyledTableCell>
-                      <StyledTableCell align="center">更新日</StyledTableCell>
+                      <StyledTableCell align="center">タイム</StyledTableCell>
+                      <StyledTableCell align="center">記録日</StyledTableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {testRow.map((row) => (
-                      <StyledTableRow key={row.rank}>
-                        <StyledTableCell align="center">{row.rank}</StyledTableCell>
-                        <StyledTableCell align="center">{row.time}</StyledTableCell>
-                        <StyledTableCell align="center">{row.update_time}</StyledTableCell>
-                      </StyledTableRow>
-                    ))}
+                    {/* type=0の時 */}
+                    {seQuestionType === 0 &&
+                      yourRecHistory_zero.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=1の時 */}
+                    {seQuestionType === 1 &&
+                      yourRecHistory_one.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=2の時 */}
+                    {seQuestionType === 2 &&
+                      yourRecHistory_two.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
                   </TableBody>
                 </Table>
               </TableContainer>

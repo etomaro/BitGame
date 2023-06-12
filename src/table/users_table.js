@@ -17,6 +17,7 @@ export const create_users = async (data) => {
             setDoc(userRef, {
                 user_id: data.user_id,
                 name: data.name,
+                create_time: Timestamp.now(),
                 update_time: Timestamp.now()
             })
             console.log("user created")
@@ -28,15 +29,16 @@ export const create_users = async (data) => {
     })
 }
 
-export const get_user_name = async (user_id) => {
-    // Returns: user_name
+export const get_user_id_name = async (user_id) => {
+    // Returns: {user_id: user_name}
 
     const userRef = doc(db, 'users', user_id.toString());  // userテーブル
     const docSnapshot = await getDoc(userRef);
+    // console.log("docSnapshot: ", docSnapshot.data())
     if (docSnapshot.exists()) {
-        return docSnapshot.data()["name"];
+        return {[user_id]: docSnapshot.data()["name"]};
     } else {
-        return "ERROR_USER_NAME";
+        return {[user_id]: "ERROR_USER_NAME"};
     }
 }
 export const test = async () => {
@@ -45,55 +47,23 @@ export const test = async () => {
 
     
 
-export const get_users_name = async (user_id_list) => {
-    // Returns: {user_id: user_name, ...}
-    let result = {};
+export const get_user_id_names = async (user_id_list) => {
+    // Returns: {user_id1: user_name1, user_id2: user_name2, ...}
     
-    // 配列をループする
-    console.log("start")
-    await user_id_list.forEach(async (user_id) => {
-        const usersRef = doc(db, 'users', user_id);
-        console.log("get user name: ", user_id)
-        const docSnapshot = await getDoc(usersRef);
-        if (docSnapshot.exists()) {
-            console.log("a")
-            console.log("docSnapshot: ", docSnapshot.data())
-            result[user_id] = docSnapshot.data()["name"];
-        } else {
-            console.log("b")
-            console.log("docSnapshot: ", docSnapshot.data())
-            result[user_id] = "ERROR_USER_NAME";
-        }
-        // getDoc(usersRef).then((docSnapshot) => {
-        //     if (docSnapshot.exists()) {
-        //         console.log("a")
-        //         console.log("docSnapshot: ", docSnapshot.data())
-        //         result[user_id] = docSnapshot.data()["name"];
-        //     } else {
-        //         console.log("b")
-        //         console.log("docSnapshot: ", docSnapshot.data())
-        //         result[user_id] = "ERROR_USER_NAME";
-        //     }
-        // }).catch((error) => {
-        //     console.log("error: ", error);
-        // })
-        console.log("aa")
+    // 各user_idに対してuser_nameを同時に(順番ではなく)取得する
+    const promises = user_id_list.map((user_id) => {
+        return get_user_id_name(user_id)
     })
-    console.log("bb")
-    console.log("get_users_name func end\nRETURNS: ", result)
 
-    // console.log("start")
-    // const user_id = user_id_list[0];
-    // const usersRef = doc(db, 'users', user_id);
-    // const docSnapshot = await getDoc(usersRef);
-    // if (docSnapshot.exists()) {
-    //     console.log("a")
-    // } else {
-    //     console.log("b")
-    // }
-    // console.log("[aync tet]docSnapshot: ", docSnapshot.data())
-    // console.log("bb")
+    // すべてのリソースが取得できるまで待つ
+    const responses = await Promise.all(promises)
 
+    // console.log("[responses] get_user_id_names fnc: ", responses)
 
-    return result;
+    let result = {}
+    responses.forEach((response) => {
+        result = {...result, ...response}
+    })
+
+    return result
 }
