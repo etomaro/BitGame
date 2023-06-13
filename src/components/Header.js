@@ -9,11 +9,11 @@ import AppBar from '@mui/material/AppBar';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { signUp, signIn, mySignOut, isLogin } from '../firebase'
+import { SignUp, signIn, mySignOut, isLogin } from '../firebase'
 import { Link, useNavigate, Redirect } from 'react-router-dom';
 import { useAuthContext } from '../contexts/AuthContext';
-import { useEffect } from 'react';
-import { create_user }  from '../table/users_table';
+import { useEffect, useState } from 'react';
+import { create_user, get_user_id_name }  from '../table/users_table';
 
 
 // button style
@@ -25,13 +25,28 @@ const signUpStyle = {
 export const Header = () => {
   // const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [name, setName] = useState('');
 
   const navigate = useNavigate();
   // context 
   const { user } = useAuthContext();
-  // useEffect(() => {
-  //   setAuth(user);
-  // }, [user]);
+
+
+  useEffect(() => {
+    if (user) {
+      get_user_id_name(user.uid).then((response) => {
+        // 初回singUp時だとERROR_USER_NAMEになるので、displayNameを登録(signUp時に名前を設定できるようにしたら修正する必要あり)
+        // 妥協案
+        if (response[user.uid] === 'ERROR_USER_NAME') {
+          setName(user.displayName);
+        } else {
+          setName(response[user.uid])
+        }
+      })
+    } else {
+      setName('Guest');
+    }
+  }, [user]);
 
   const handleMenu = (event) => {
     // console.log("event: ", event.currentTarget)
@@ -53,7 +68,7 @@ export const Header = () => {
     setAnchorEl(null);
   };
   const hadleSignUp = () => {
-    signUp();
+    SignUp();
     setAnchorEl(null);
   }
   const hadleSignIn = () => {
@@ -80,6 +95,24 @@ export const Header = () => {
     background: AppBarStyle_func(),
   };
 
+  // profileボタンを押す
+  const handleProfile = () => {
+    navigate('/profile/');
+    setAnchorEl(null);
+  }
+
+  // function get_user_name() {
+  //   if (user) {
+  //     get_user_id_name(user.uid).then((response) => {
+  //       console.log("response: ", response[user.uid])
+  //       console.log("type: ", typeof(response[user.uid]))
+  //       return response[user.uid];
+  //     })
+  //   } else {
+  //     return 'Guest';
+  //   }
+  // }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={AppBarStyle}>
@@ -95,7 +128,8 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Welecome {user ? user.displayName : 'Guest'}
+          {/* Welecome {user ? get_user_id_name(user.uid)[user.uid] : 'Guest'} */}
+        Welecome {name}
           </Typography>
           {/* マイページ(LogIn時)*/}
           {user && (
@@ -127,7 +161,7 @@ export const Header = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
                 <MenuItem onClick={handleSignOut}>SignOut</MenuItem>
               </Menu>
             </div>

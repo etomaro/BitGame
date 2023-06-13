@@ -4,6 +4,8 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { signOut } from 'firebase/auth'
 import { getFirestore } from "firebase/firestore";
 import { create_users }  from './table/users_table';
+import { useAuthContext } from './contexts/AuthContext';
+
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -31,12 +33,15 @@ export function getAnaly() {
 const provider = new GoogleAuthProvider();
 export const auth = getAuth(app);
 // SignUp
-export const signUp = () => {
+export const SignUp = () => {
+
     try{
         signInWithPopup(auth, provider).then((result) => {
             // console.log("signUp result: ", result.user.uid);
             // databaseにuidとdisplayNameを登録
             create_users({user_id: result.user.uid, name: result.user.displayName})
+            // context登録
+            // setConName(result.user.displayName)
         }).cahtch((error) => {
             Error(error);
         })
