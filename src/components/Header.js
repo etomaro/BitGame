@@ -129,7 +129,7 @@ export const Header = () => {
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {/* Welecome {user ? get_user_id_name(user.uid)[user.uid] : 'Guest'} */}
-        Welecome {name}
+        Welcome {name}
           </Typography>
           {/* マイページ(LogIn時)*/}
           {user && (
