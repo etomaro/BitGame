@@ -34,7 +34,7 @@ export const Header = () => {
   // }, [user]);
 
   const handleMenu = (event) => {
-    console.log("event: ", event.currentTarget)
+    // console.log("event: ", event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
 

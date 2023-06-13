@@ -84,6 +84,7 @@ export const QandA = () => {
     "seEndSecond": "",
     "seQuestionType": 0,
     "seIsDebug": false,
+    "seSuccessResult": [],
     "seFaultResult": [],
     "seQuestionList": [],
   }
@@ -126,6 +127,7 @@ export const QandA = () => {
   // 2: 8bit2進数を10進数に変換する(下位4bitは0)
   const [seQuestionType, setQuestionType] = useState(init_state.seQuestionType);  // 問題の種類
   const [seIsDebug, setIsDebug] = useState(init_state.seIsDebug);  // デバッグモード
+  const [seSuccessResult, setSuccessResult] = useState(init_state.seSuccessResult);  // 正解した問題
   const [seFaultResult, setFaultResult] = useState(init_state.seFaultResult);  // 間違えた問題
   const [seQuestionList, setQuestionList] = useState(init_state.seQuestionList);  // 問題のリスト
   // historyデータ
@@ -165,6 +167,7 @@ export const QandA = () => {
     setQuestionType(init_state.seQuestionType);
     setIsDebug(init_state.seIsDebug);
     // seFaultResult = init_state.seFaultResult;
+    setSuccessResult(init_state.seSuccessResult);
     setFaultResult(init_state.seFaultResult);
     // seQuestionList = init_state.seQuestionList
     setQuestionList(init_state.seQuestionList);
@@ -309,14 +312,17 @@ export const QandA = () => {
 
 
   // 正答率を計算する関数
-  const calcRate = () => {
+  const calcRate = (done, maxCount) => {
     // 正答数を計算
-    const goodCount = sedone.filter((value) => {
+    const goodCount = done.filter((value) => {
       return value;
     }).length;
+    console.log("sedone: , ", done)
+    console.log("good count: ", goodCount)
+    console.log("seMaxCount: ", maxCount)
     // 正答率を計算
-    const rate = Math.round(goodCount / seMaxCount * 100);
-    return rate;
+    const rate = Math.round(goodCount / maxCount * 100);
+    return rate.toString();
   }
   // 問題を10問ランダムに作成する関数
   const createQuestionList = () => {
@@ -399,18 +405,25 @@ export const QandA = () => {
     // questionを文字に変換
     const questionStr = question.toString();
     // decimalとquestionが一致したら正解
+    let newDone = [];
     if (seInNum === questionStr) {
       // 正解した問題を配列に追加
-      setDone([...sedone, true]);
+      newDone = [...sedone, true];
+      console.log("newDone: ", newDone)
+      setDone(newDone);
+      const newSuccessResult = [...seSuccessResult, seQuestion];
+      setSuccessResult(newSuccessResult);
       // console.log("正解")
       setIsGood(true);
       // correctの音を鳴らす
       playCor();
     } else {
       // 不正解の場合はfalseを追加
-      setDone([...sedone, false]);
+      newDone = [...sedone, false];
+      setDone(newDone);
       // 間違えた問題を配列に追加
-      setFaultResult([...seFaultResult, seQuestion]);
+      const newFaultResult = [...seFaultResult, seQuestion];
+      setFaultResult(newFaultResult);
       setIsBad(true);
       // coreectの音を鳴らす
       playInCor();
@@ -433,7 +446,7 @@ export const QandA = () => {
       // console.log(`経過時間: ${minutes}分 ${seconds}秒`);
 
       // 正答数を取得
-      const q_correct_num = sedone.filter((value) => {
+      const q_correct_num = newDone.filter((value) => {
         return value;
       }).length.toString()
       // DBに記録を保存
@@ -443,7 +456,7 @@ export const QandA = () => {
         'user_id': user ? user.uid : "NO_LOGIN_USER",
         'q_num': seMaxCount.toString(),
         'q_correct_num': q_correct_num,
-        'q_poc': calcRate().toString(),
+        'q_poc': calcRate(newDone, seMaxCount),
         'is_debug': seIsDebug,
       }
       create_history(data);
@@ -458,7 +471,7 @@ export const QandA = () => {
     // 入力を初期化
     setInNum("");
 
-    // 0.2秒後に正解or不正解の表示を消す
+    // 2秒後に正解or不正解の表示を消す
     setTimeout(() => {
       setIsGood(false);
       setIsBad(false);
@@ -618,7 +631,6 @@ export const QandA = () => {
     marginTop: "30px",
     // 間隔をあける
     gap: isMobile ? "30px" : "60px",
-    marginBottom: "30px",
   }
   const tableTitleStyle_1 = {
     // 左図に寄せる
@@ -904,7 +916,7 @@ export const QandA = () => {
         {seIsGame === 2 &&
         <>
           <Box style={textStyle}>結果</Box>
-          <Box style={textStyle}>正答率: {calcRate()}%</Box>
+          <Box style={textStyle}>正答率: {calcRate(sedone, seMaxCount)}%</Box>
           <Box style={textStyle}>経過時間: {seEndMinute}分{seEndSecond}秒</Box>
 
           <Box style={resultStyle}>

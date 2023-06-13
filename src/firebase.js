@@ -34,7 +34,7 @@ export const auth = getAuth(app);
 export const signUp = () => {
     try{
         signInWithPopup(auth, provider).then((result) => {
-            console.log("signUp result: ", result.user.uid);
+            // console.log("signUp result: ", result.user.uid);
             // databaseにuidとdisplayNameを登録
             create_users({user_id: result.user.uid, name: result.user.displayName})
         }).cahtch((error) => {
@@ -64,7 +64,7 @@ export const mySignOut = () => {
 // ログインしているかどうか判定する関数
 export const isLogin = () => {
     const result = auth.currentUser;
-    console.log("login state: ", result);
+    // console.log("login state: ", result);
     return result;
 }
 
