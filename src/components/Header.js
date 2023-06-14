@@ -84,7 +84,7 @@ export const Header = () => {
       if (process.env.REACT_APP_ENV === 'PROD') {
         return '#ff0000';
       } else if (process.env.REACT_APP_ENV === 'STG') {
-        return '#FDA802';
+        return '#1976d2';
       }
     } else {
       return '#808080';
@@ -93,7 +93,6 @@ export const Header = () => {
 
   const AppBarStyle = {
     background: AppBarStyle_func(),
-    filter: "brightness(110%)"
   };
 
   // profileボタンを押す
