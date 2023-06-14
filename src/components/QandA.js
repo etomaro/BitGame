@@ -39,7 +39,6 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import { blue } from '@mui/material/colors';
 import { get_users_name } from '../table/users_table';
 
-
 // 8bit2進数を10進数に変換する関数
 function binaryToDecimal(binary) {
   return binary.split('').reverse().reduce((acc, curr, index) => {
@@ -202,6 +201,23 @@ export const QandA = () => {
     user && setHistory_login(user.uid);
   }, [user])
 
+  // --- デフォルトのデザインを加工 ---
+  // checkbox
+  const TestCheckbox = styled(Checkbox)({
+    "&.MuiCheckbox-root": {
+        border: ".15em solid rgb(217, 176, 255)", 
+        borderRadius: "1em",
+        margin: "10px",
+    },
+    "&.Mui-checked": {
+        boxShadow: "0 0 1em .25em rgb(217, 176, 255),0 0 4em 1em rgba(191,123,255,.781),inset 0 0 .75em .25em rgb(217,176,255)", 
+    },
+    // チェックマークを消す
+    "& .MuiSvgIcon-root": {
+        display: "none"
+    },
+})
+
   // 数値ボタンのスタイル
   const buttonStyle = {
     width: "calc(100% / 5)",
@@ -227,12 +243,23 @@ export const QandA = () => {
 
   // startボタンのスタイル
   const startButtonStyle = {
+    // --- ネオン系 ---
+    border: ".25em solid rgb(217, 176, 255)", // borderの色
+    padding: "1em 3em", 
+    color: "rgb(217, 176, 255)",  // fontのcolor
+    fontSize: "25px", 
+    fontWeight: "bold",
+    backgroundColor: "rgb(100, 61, 136)", // 背景の色
+    borderRadius: "1em",  // 角丸
+    outline: "none", 
+    // 光る感じ
+    boxShadow: "0 0 1em .25em rgb(217, 176, 255),0 0 4em 1em rgba(191,123,255,.781),inset 0 0 .75em .25em rgb(217,176,255)", 
+    textShadow: "0 0 .5em rgb(217,176,255)", 
+    position: "relative", 
+    transition: "all .3s" ,
+    // --- 以下 ネオン系以外 ---
     width: "calc(100% / 7)",
-    height: "70px",
-    // ボーダーを黒色にする
-    border: "solid 1px #000000",
-    // ボタンの文字を黒にする
-    color: "#000000",
+    height: "90px",
     // 下との間隔をあける
     marginBottom: isMobile ? "10px" : "50px",
   };
@@ -300,12 +327,22 @@ export const QandA = () => {
     fontSize: "15px",
   };
   const choiceStyle = {
+    // --- ネオン系 ---
+    color: "rgb(217, 176, 255)",
+    textShadow: "0 0 .5em rgb(217,176,255)",
+    // --- 以下 ネオン系以外 ---
     // テキストを左寄せにする
     textAlign: "left",
     // 縦に並べる
     flexDirection: "column",
     // 下との間隔をあける
     marginBottom: isMobile ? "30px" : "50px",
+
+  }
+
+  const checkStyle = {
+    // 丸いチェックボックスにする
+    borderRadius: "50%",
 
   }
 
@@ -665,15 +702,15 @@ export const QandA = () => {
           {/* 問題の選択 */}
           <Box style={choiceStyle}>
             <FormControlLabel
-              control={<Checkbox checked={seQuestionType === 0} onChange={() => setQuestionType(0)} name="checkedA" />}
+              control={<TestCheckbox checked={seQuestionType === 0} onChange={() => setQuestionType(0)} name="checkedA" style={checkStyle}/>}
               label="2進数 -> 10進数"
             />
             <FormControlLabel
-              control={<Checkbox checked={seQuestionType === 1} onChange={() => setQuestionType(1)} name="checkedA" />}
+              control={<TestCheckbox checked={seQuestionType === 1} onChange={() => setQuestionType(1)} name="checkedA" />}
               label="2進数 -> 10進数(上位4bitは0)"
             />
             <FormControlLabel
-              control={<Checkbox checked={seQuestionType === 2} onChange={() => setQuestionType(2)} name="checkedA" />}
+              control={<TestCheckbox checked={seQuestionType === 2} onChange={() => setQuestionType(2)} name="checkedA" />}
               label="2進数 -> 10進数(下位4bitは0)"
             />
           </Box>
