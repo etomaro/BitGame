@@ -502,9 +502,10 @@ export const QandA = () => {
     }
 
     // 問題数を1増やす
-    setCount(seCount + 1);
+    const newCount = seCount + 1
+    setCount(newCount);
     // 問題を作成
-    setQuestion(seQuestionList[seCount-1]);
+    setQuestion(seQuestionList[newCount-1]);
     // 入力を初期化
     setInNum("");
 
@@ -522,6 +523,7 @@ export const QandA = () => {
     setIsGame(1);
     // 問題を作成
     const questionList = createQuestionList();
+    console.log("全部の問題: ", questionList)
     setQuestionList(questionList);
     // 最初の問題を設定
     setQuestion(questionList[0]);
