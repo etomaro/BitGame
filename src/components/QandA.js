@@ -217,6 +217,29 @@ export const QandA = () => {
         display: "none"
     },
 })
+// button
+const TestButton = styled(Button)({
+  // --- ネオン系 ---
+  border: ".25em solid rgb(217, 176, 255)", // borderの色
+  padding: "1em 3em", 
+  color: "rgb(217, 176, 255)",  // fontのcolor
+  fontSize: "25px", 
+  fontWeight: "bold",
+  backgroundColor: "rgb(100, 61, 136)", // 背景の色
+  borderRadius: "1em",  // 角丸
+  outline: "none", 
+  // 光る感じ
+  boxShadow: "0 0 1em .25em rgb(217, 176, 255),0 0 4em 1em rgba(191,123,255,.781),inset 0 0 .75em .25em rgb(217,176,255)", 
+  textShadow: "0 0 .5em rgb(217,176,255)", 
+  position: "relative", 
+  transition: "all .3s" ,
+  // --- 以下 ネオン系以外 ---
+  width: "calc(100% / 7)",
+  height: "90px",
+  // 下との間隔をあける
+  marginBottom: isMobile ? "10px" : "50px",
+});
+
 
   // 数値ボタンのスタイル
   const buttonStyle = {
@@ -716,7 +739,7 @@ export const QandA = () => {
               label="2進数 -> 10進数(下位4bitは0)"
             />
           </Box>
-          <Button variant="contained" style={startButtonStyle} onClick={startClick}>GAME START</Button>
+          <TestButton variant="contained" onClick={startClick}>GAME START</TestButton>
           {/* テスト用ボタン */}
           {/* <Button onClick={testDB_read}>DB read</Button> */}
           {/* hisotryList */}
