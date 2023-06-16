@@ -266,25 +266,16 @@ const TestButton = styled(Button)({
 
   // startボタンのスタイル
   const startButtonStyle = {
-    // --- ネオン系 ---
-    border: ".25em solid rgb(217, 176, 255)", // borderの色
-    padding: "1em 3em", 
-    color: "rgb(217, 176, 255)",  // fontのcolor
-    fontSize: "25px", 
-    fontWeight: "bold",
-    backgroundColor: "rgb(100, 61, 136)", // 背景の色
-    borderRadius: "1em",  // 角丸
-    outline: "none", 
-    // 光る感じ
-    boxShadow: "0 0 1em .25em rgb(217, 176, 255),0 0 4em 1em rgba(191,123,255,.781),inset 0 0 .75em .25em rgb(217,176,255)", 
-    textShadow: "0 0 .5em rgb(217,176,255)", 
-    position: "relative", 
-    transition: "all .3s" ,
-    // --- 以下 ネオン系以外 ---
     width: "calc(100% / 7)",
-    height: "90px",
+    height: "70px",
+    // ボーダーを黒色にする
+    border: "solid 1px #000000",
+    // ボタンの文字を黒にする
+    color: "#000000",
     // 下との間隔をあける
     marginBottom: isMobile ? "10px" : "50px",
+    // 角丸
+    borderRadius: "1em",
   };
 
   // debugボタンのスタイル
@@ -351,8 +342,8 @@ const TestButton = styled(Button)({
   };
   const choiceStyle = {
     // --- ネオン系 ---
-    color: "rgb(217, 176, 255)",
-    textShadow: "0 0 .5em rgb(217,176,255)",
+    // color: "rgb(217, 176, 255)",
+    // textShadow: "0 0 .5em rgb(217,176,255)",
     // --- 以下 ネオン系以外 ---
     // テキストを左寄せにする
     textAlign: "left",
@@ -727,19 +718,19 @@ const TestButton = styled(Button)({
           {/* 問題の選択 */}
           <Box style={choiceStyle}>
             <FormControlLabel
-              control={<TestCheckbox checked={seQuestionType === 0} onChange={() => setQuestionType(0)} name="checkedA" style={checkStyle}/>}
+              control={<Checkbox checked={seQuestionType === 0} onChange={() => setQuestionType(0)} name="checkedA" style={checkStyle}/>}
               label="2進数 -> 10進数"
             />
             <FormControlLabel
-              control={<TestCheckbox checked={seQuestionType === 1} onChange={() => setQuestionType(1)} name="checkedA" />}
+              control={<Checkbox checked={seQuestionType === 1} onChange={() => setQuestionType(1)} name="checkedA" />}
               label="2進数 -> 10進数(上位4bitは0)"
             />
             <FormControlLabel
-              control={<TestCheckbox checked={seQuestionType === 2} onChange={() => setQuestionType(2)} name="checkedA" />}
+              control={<Checkbox checked={seQuestionType === 2} onChange={() => setQuestionType(2)} name="checkedA" />}
               label="2進数 -> 10進数(下位4bitは0)"
             />
           </Box>
-          <TestButton variant="contained" onClick={startClick}>GAME START</TestButton>
+          <Button variant="contained" style={startButtonStyle} onClick={startClick}>GAME START</Button>
           {/* テスト用ボタン */}
           {/* <Button onClick={testDB_read}>DB read</Button> */}
           {/* hisotryList */}
