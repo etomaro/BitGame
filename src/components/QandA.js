@@ -731,6 +731,17 @@ const TestButton = styled(Button)({
     fontSize: "15px",
   }
 
+  const tableTitleStyle_3 = {
+    // 左図に寄せる
+    textAlign: "left",
+    // 左の余白をあける
+    marginLeft: "5px",
+    // フォントを小さくする
+    fontSize: "15px",
+    // 白色にする
+    color: "#ffffff"
+  }
+
   // test
   const testDB_read = ()=> {
 
@@ -891,7 +902,7 @@ const TestButton = styled(Button)({
             </Box>
             {/* ログインアカウントのhistory */}
             <Box>
-              <Box style={tableTitleStyle_2}>あなたのレコード記録(正答率100%のみ)</Box>
+              <Link to="record" style={tableTitleStyle_3}>あなたのレコード記録(正答率100%のみ)</Link>
               <TableContainer component={Paper}>
                 <Table aria-label="customized table">
                   <TableHead>
