@@ -81,6 +81,8 @@ export const QandA = () => {
     "seStartTime": null,
     "seEndMinute": "",
     "seEndSecond": "",
+    "seElapsedTime": [],
+    "seLastEndTime": "",
     "seQuestionType": 0,
     "seIsDebug": false,
     "seSuccessResult": [],
@@ -121,6 +123,8 @@ export const QandA = () => {
   const [seStartTime, setStartTime] = useState(init_state.seStartTime);  // 開始時刻
   const [seEndMinute, setEndMinute] = useState(init_state.seEndMinute)  // 経過時間(分)
   const [seEndSecond, setEndSecond] = useState(init_state.seEndSecond)  // 経過時間(秒)
+  const [seElapsedTime, setElapsedTime] = useState(init_state.seElapsedTime)  // 1問あたりの経過時間のリスト(number型)
+  const [seLastEndTime, setLastEndTime] = useState(init_state.seLastEndTime)  // 最後に問題を解いたときの時間(Date型)
   // 0: 8bit2進数を10進数に変換する
   // 1: 8bit2進数を10進数に変換する(上位4bitは0)
   // 2: 8bit2進数を10進数に変換する(下位4bitは0)
@@ -128,7 +132,7 @@ export const QandA = () => {
   const [seIsDebug, setIsDebug] = useState(init_state.seIsDebug);  // デバッグモード
   const [seSuccessResult, setSuccessResult] = useState(init_state.seSuccessResult);  // 正解した問題
   const [seFaultResult, setFaultResult] = useState(init_state.seFaultResult);  // 間違えた問題
-  const [seQuestionList, setQuestionList] = useState(init_state.seQuestionList);  // 問題のリスト
+  const [seQuestionList, setQuestionList] = useState(init_state.seQuestionList);  // 問題のリスト(2進数で保持)
   // historyデータ
   const [allRecHistory_zero, setAllRecHistory_zero] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:0)
   const [allRecHistory_one, setAllRecHistory_one] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:1)
@@ -163,7 +167,8 @@ export const QandA = () => {
     setStartTime(init_state.seStartTime);
     setEndMinute(init_state.seEndMinute);
     setEndSecond(init_state.seEndSecond);
-    setQuestionType(init_state.seQuestionType);
+    setElapsedTime(init_state.seElapsedTime);
+    // setQuestionType(init_state.seQuestionType);
     setIsDebug(init_state.seIsDebug);
     // seFaultResult = init_state.seFaultResult;
     setSuccessResult(init_state.seSuccessResult);
@@ -368,9 +373,9 @@ const TestButton = styled(Button)({
     const goodCount = done.filter((value) => {
       return value;
     }).length;
-    console.log("sedone: , ", done)
-    console.log("good count: ", goodCount)
-    console.log("seMaxCount: ", maxCount)
+    // console.log("sedone: , ", done)
+    // console.log("good count: ", goodCount)
+    // console.log("seMaxCount: ", maxCount)
     // 正答率を計算
     const rate = Math.round(goodCount / maxCount * 100);
     return rate.toString();
@@ -451,6 +456,22 @@ const TestButton = styled(Button)({
   }
   const okClick = () => {
     // console.log(`ok button click!\nsecount: ${seCount}\nseMaxCount: ${seMaxCount}`)
+    // 1つの問題の解答時間を計測
+    const oneEndTime = new Date();
+    let newElapsedTime = [];
+    if (seElapsedTime.length === 0) {
+      // 最初の問題の場合
+      newElapsedTime = oneEndTime - seStartTime;
+      setElapsedTime([newElapsedTime]);
+      setLastEndTime(oneEndTime);
+    } else {
+      // 2問目以降の場合
+      const oneElapsedTime = oneEndTime - seLastEndTime
+      newElapsedTime = [...seElapsedTime, oneElapsedTime];
+      setElapsedTime(newElapsedTime);
+      setLastEndTime(oneEndTime);
+    }
+    
     // 問題を10進数に変換
     const question = binaryToDecimal(seQuestion);
     // questionを文字に変換
@@ -460,7 +481,6 @@ const TestButton = styled(Button)({
     if (seInNum === questionStr) {
       // 正解した問題を配列に追加
       newDone = [...sedone, true];
-      console.log("newDone: ", newDone)
       setDone(newDone);
       const newSuccessResult = [...seSuccessResult, seQuestion];
       setSuccessResult(newSuccessResult);
@@ -487,6 +507,7 @@ const TestButton = styled(Button)({
       const endTime = new Date();
       // 差分を計算
       const elapsedTime = endTime - seStartTime;
+      // console.log("型テスト: ", typeof(elapsedTime))
       // 分、秒、ミリ秒に変換
       const minutes = Math.floor(elapsedTime / 60000);
       const seconds = Math.floor((elapsedTime % 60000) / 1000);
@@ -501,7 +522,7 @@ const TestButton = styled(Button)({
         return value;
       }).length.toString()
       // DBに記録を保存
-      const data = {
+      const history_data = {
         'type': seQuestionType.toString(),
         'time': elapsedTime,
         'user_id': user ? user.uid : "NO_LOGIN_USER",
@@ -510,8 +531,15 @@ const TestButton = styled(Button)({
         'q_poc': calcRate(newDone, seMaxCount),
         'is_debug': seIsDebug,
       }
-      create_history(data);
-
+      let history_q_data = [];
+      for (let i = 0; i < seMaxCount; i++) {
+        history_q_data.push({
+          "time": newElapsedTime[i],
+          "question_id": binaryToDecimal(seQuestionList[i]).toString(),
+          "is_correct": newDone[i],
+        })
+      }
+      create_history(history_data, history_q_data);
       // console.log("game done end")
     }
 
@@ -537,11 +565,11 @@ const TestButton = styled(Button)({
     setIsGame(1);
     // 問題を作成
     const questionList = createQuestionList();
-    console.log("全部の問題: ", questionList)
+    // console.log("全部の問題: ", questionList)
     setQuestionList(questionList);
     // 最初の問題を設定
     setQuestion(questionList[0]);
-    // 計測開始
+    // 10問計測開始
     setStartTime(new Date)
     // get()
   }
