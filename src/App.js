@@ -9,9 +9,14 @@ import { AuthProvider } from './contexts/AuthContext';
 import { AnonimasAnime } from './components/anonimas/anonimas';
 import { Network } from './components/network';
 import { Record } from './components/Record';
+import { useMediaQuery, useTheme } from '@mui/material';
+
 
 function App() {
   const [anime, setAnime] = useState(true);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     setTimeout(() => {
@@ -22,9 +27,11 @@ function App() {
   return (
     <AuthProvider>
       {/* 画面初期時のアニメーション */}
-      {anime && <AnonimasAnime />}
+      {/* anime = true かつ isMobile = true の時のみアニメーションを表示 */}
+      {anime && !isMobile && <AnonimasAnime />}
       {/* メインアプリ */}
-      {!anime && 
+      {/* mobile=trueの時か、anime=falseの時に表示  */}
+      {(isMobile || !anime) &&
         <div className="App">
         <header className="App-header">
           <Header />
