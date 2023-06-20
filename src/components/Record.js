@@ -105,14 +105,26 @@ export const Record = () => {
 
       const columns = [
         { field: 'decimal', headerName: '10進数'},
-        { field: 'binary', headerName: '2進数',},
+        { field: 'binary', headerName: '2進数', sortable: false},
         { field: 'poc', headerName: '正答率(%)', disableColumnMenu: true },
         { field: 'numOfAnswer', headerName: '解答数', disableColumnMenu: true},
-        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true,},
+        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true, width: 200},
+      ];
+      // max(351px)
+      const columns_mobile = [
+        { field: 'decimal', headerName: '10進数', width: 60},
+        { field: 'binary', headerName: '2進数', width: 70},
+        { field: 'poc', headerName: '正答率(%)', disableColumnMenu: true, width: 70 },
+        { field: 'numOfAnswer', headerName: '解答数', disableColumnMenu: true, width: 50},
+        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true, width: 100},
       ];
       const columns_non = [
         { field: 'decimal', headerName: '10進数'},
-        { field: 'binary', headerName: '2進数',sortable: false},
+        { field: 'binary', headerName: '2進数', sortable: false, width: 200},
+      ];
+      const columns_non_mobile = [
+        { field: 'decimal', headerName: '10進数', width: 100},
+        { field: 'binary', headerName: '2進数', sortable: false, width: 250},
       ];
 
       const gridStyle = {
@@ -125,6 +137,19 @@ export const Record = () => {
             // 薄い赤色
             backgroundColor: '#ff0000',
         },
+        width: isMobile ? "100%": "600px",
+        // テキストサイズを小さくする
+        fontSize: isMobile ? "0.6rem" : "0.8rem",
+        // '& .MuiDataGrid-columnHeaderDraggableContainer': {
+        //     // 消す
+        //     display: 'none',
+        // }
+        '& .MuiDataGrid-menuIcon': {
+            display: 'none',
+        },
+        '& .MuiDataGrid-iconButtonContainer': {
+            display: 'none',
+        }
       }
       const gridStyle_non = {
         // 背景を白色にする
@@ -136,11 +161,12 @@ export const Record = () => {
             // 薄い灰色
             backgroundColor: '#d3d3d3',
         },
-      }
-
-      const boxStyle = {
-        // 文字を中央に配置
-        textAlign: 'center',
+        '& .MuiDataGrid-menuIcon': {
+            display: 'none',
+        },
+        '& .MuiDataGrid-iconButtonContainer': {
+            display: 'none',
+        }
       }
 
       const tableStyle = {
@@ -153,18 +179,22 @@ export const Record = () => {
         // 間隔をあける
         gap: isMobile ? "30px" : "60px",
         width: isMobile ? "90%" : "50%",
-      }
+    }
+    const textStyle = {
+        // テキストサイズを小さくする
+        fontSize: "1.2rem",
+    }
 
   
     return (
         <>
         <Box style={tableStyle}>
             <Box>
-                <Box>あなたの詳細なレコード記録</Box>
-                <Box style={boxStyle}>
+                <Box style={textStyle}>あなたの詳細なレコード記録</Box>
+                <Box>
                     <DataGrid
                         rows={seRows}
-                        columns={columns}
+                        columns={isMobile ? columns_mobile: columns}
                         initialState={{
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 30 },
@@ -175,11 +205,11 @@ export const Record = () => {
                 </Box>
             </Box>
             <Box>
-                <Box>一度も解答してない問題</Box>
-                <Box style={boxStyle}>
+                <Box style={textStyle}>一度も解答してない問題</Box>
+                <Box>
                     <DataGrid
                         rows={seNonRows}
-                        columns={columns_non}
+                        columns={isMobile ? columns_non_mobile : columns_non}
                         initialState={{
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 30 },
