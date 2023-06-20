@@ -706,6 +706,7 @@ const TestButton = styled(Button)({
   const tableStyle = {
     // スマホの時縦並びにする
     flexDirection: isMobile ? "column" : "row",
+    width: isMobile ? "90%": "67%",
     // 横並びにする
     display: "flex",
     // 上の余白をあける
