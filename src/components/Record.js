@@ -70,7 +70,7 @@ export const Record = () => {
             value["poc"] = (count / value["numOfAnswer"]) * 100;
             // 平均タイム
             const sum = value["averageTime"].reduce((a, b) => a + b);
-            value["averageTime"] = sum / value["numOfAnswer"];
+            value["averageTime"] = (sum / value["numOfAnswer"]) / 1000;
         }
 
         // 0-255までループ
