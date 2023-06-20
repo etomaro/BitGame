@@ -104,19 +104,19 @@ export const Record = () => {
     }
 
       const columns = [
-        { field: 'decimal', headerName: '10進数'},
+        { field: 'decimal', headerName: '10進数', type: 'number'},
         { field: 'binary', headerName: '2進数', sortable: false},
-        { field: 'poc', headerName: '正答率(%)', disableColumnMenu: true },
-        { field: 'numOfAnswer', headerName: '解答数', disableColumnMenu: true},
-        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true, width: 200},
+        { field: 'poc', headerName: '正答率(%)', disableColumnMenu: true, type: 'number'},
+        { field: 'numOfAnswer', headerName: '解答数', disableColumnMenu: true, type: 'number'},
+        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true, width: 200, type: 'number'},
       ];
       // max(351px)
       const columns_mobile = [
-        { field: 'decimal', headerName: '10進数', width: 60},
+        { field: 'decimal', headerName: '10進数', width: 60, type: 'number'},
         { field: 'binary', headerName: '2進数', width: 70},
-        { field: 'poc', headerName: '正答率(%)', disableColumnMenu: true, width: 70 },
-        { field: 'numOfAnswer', headerName: '解答数', disableColumnMenu: true, width: 50},
-        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true, width: 100},
+        { field: 'poc', headerName: '正答率(%)', disableColumnMenu: true, width: 70, type: 'number'},
+        { field: 'numOfAnswer', headerName: '解答数', disableColumnMenu: true, width: 50, type: 'number'},
+        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true, width: 100, type: 'number'},
       ];
       const columns_non = [
         { field: 'decimal', headerName: '10進数'},

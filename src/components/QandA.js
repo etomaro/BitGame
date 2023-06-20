@@ -713,7 +713,7 @@ const TestButton = styled(Button)({
     // 中央に寄せる
     justifyContent: "center",
     // 右の余白をあける
-    marginRight: isMobile ? "0px" : "130px" ,
+    marginRight: isMobile ? "0px" : "100px" ,
     // 上の余白をあける
     marginTop: "30px",
     // 間隔をあける
