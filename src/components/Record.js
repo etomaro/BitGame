@@ -11,17 +11,185 @@ import { styled } from '@mui/material/styles';
 import Checkbox from "@mui/material/Checkbox";
 import { pink } from '@mui/material/colors';
 import { useEffect } from 'react';
-
+import { DataGrid } from '@mui/x-data-grid';
+import { get_history_user } from '../table/history_table';
+import { useAuthContext } from '../contexts/AuthContext';
+import { useState } from 'react';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 export const Record = () => {
 
+    
+    // state
+    const [seRows, setRows] = useState([]);
+    const [seNonRows, setNonRows] = useState([]);
+
+    // context 
+    const { user } = useAuthContext();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    
     useEffect(() => {
-        console.log("レコードページ レンダリング")
-    }, []);
+        user && get_history_user(user.uid).then((response) => {
+            const arr = dataForm(response);
+            const data = arr[0];
+            const non_data = arr[1];
+            console.log("data: ", data)
+            console.log("non_data: ", non_data)
+            setRows(data);
+            setNonRows(non_data);
+        });
+      }, [user])
+
+    const dataForm = (response) => {
+        // {"1(id)": {"id": 1, "decimal": "1", "binary": "", "poc": [], "numOfAnswer": [], "averageTime": []}}
+        let data = {};  // 解答積み
+        let non_data = [];  // 解答なし
+
+        // 平均タイム、正答率、解答回数を計算
+        response.forEach((doc) => {
+            if (doc.question_id in data) {
+                data[doc.question_id]["poc"].push(doc.is_correct);
+                data[doc.question_id]["numOfAnswer"] += 1;
+                data[doc.question_id]["averageTime"].push(doc.time);
+            }else{
+                data[doc.question_id] = {
+                    "id": doc.question_id,
+                    "decimal": doc.question_id,
+                    "binary": decimalToBinary(doc.question_id),
+                    "poc": [doc.is_correct],
+                    "numOfAnswer": 1,
+                    "averageTime": [doc.time]
+                }
+            };
+        })
+        // ※オブジェクトのループは一度配列に変換する必要がある(Object.entries())
+        for (const [key, value] of Object.entries(data)) {
+            // 正答率
+            const count = value["poc"].filter((i) => i === true).length;
+            value["poc"] = (count / value["numOfAnswer"]) * 100;
+            // 平均タイム
+            const sum = value["averageTime"].reduce((a, b) => a + b);
+            value["averageTime"] = sum / value["numOfAnswer"];
+        }
+
+        // 0-255までループ
+        for (let i = 0; i < 256; i++) {
+            // 含まれていない場合
+            if (!(i in data)) {
+                non_data.push({
+                    "id": i,
+                    "decimal": i,
+                    "binary": decimalToBinary(i)
+                })
+            }
+        }
+
+        // オブジェクトを配列に変換
+        data = Object.values(data);
+        console.log("sss")
+
+        return [data, non_data]
+    } 
+    
+    // 10進数から2進数に変換
+    const decimalToBinary = (param) => {
+        // 数値に変換
+        const param_num = Number(param);
+        const binary = param_num.toString(2);
+        // 8桁になるように0を追加
+        const question = binary.padStart(8, "0");
+
+        return question
+    }
+
+      const columns = [
+        { field: 'decimal', headerName: '10進数'},
+        { field: 'binary', headerName: '2進数',},
+        { field: 'poc', headerName: '正答率(%)', disableColumnMenu: true },
+        { field: 'numOfAnswer', headerName: '解答数', disableColumnMenu: true},
+        { field: 'averageTime', headerName: '平均解答速度(s)', disableColumnMenu: true,},
+      ];
+      const columns_non = [
+        { field: 'decimal', headerName: '10進数'},
+        { field: 'binary', headerName: '2進数',sortable: false},
+      ];
+
+      const gridStyle = {
+        // 背景を白色にする
+        backgroundColor: '#fff',
+        // テキストを黒色にする
+        color: '#000',
+        // ヘッダーの背景を赤色にする
+        '& .MuiDataGrid-columnHeader': {
+            // 薄い赤色
+            backgroundColor: '#ff0000',
+        },
+      }
+      const gridStyle_non = {
+        // 背景を白色にする
+        backgroundColor: '#fff',
+        // テキストを黒色にする
+        color: '#000',
+        // ヘッダーの背景を赤色にする
+        '& .MuiDataGrid-columnHeader': {
+            // 薄い灰色
+            backgroundColor: '#d3d3d3',
+        },
+      }
+
+      const boxStyle = {
+        // 文字を中央に配置
+        textAlign: 'center',
+      }
+
+      const tableStyle = {
+        // スマホの時縦並びにする
+        flexDirection: isMobile ? "column" : "row",
+        // 横並びにする
+        display: "flex",
+        // 上の余白をあける
+        marginTop: "30px",
+        // 間隔をあける
+        gap: isMobile ? "30px" : "60px",
+        width: isMobile ? "90%" : "50%",
+      }
+
   
     return (
         <>
-        <Box>あなたの詳細なレコード記録</Box>
+        <Box style={tableStyle}>
+            <Box>
+                <Box>あなたの詳細なレコード記録</Box>
+                <Box style={boxStyle}>
+                    <DataGrid
+                        rows={seRows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 30 },
+                            },
+                        }}
+                        sx={gridStyle}
+                    />
+                </Box>
+            </Box>
+            <Box>
+                <Box>一度も解答してない問題</Box>
+                <Box style={boxStyle}>
+                    <DataGrid
+                        rows={seNonRows}
+                        columns={columns_non}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 30 },
+                            },
+                        }}
+                        sx={gridStyle_non}
+                    />
+                </Box>
+            </Box>
+        </Box>
         </>
 
     )

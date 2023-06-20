@@ -7,6 +7,8 @@ import { Profile } from './components/Profile';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { AnonimasAnime } from './components/anonimas/anonimas';
+import { Network } from './components/network';
+import { Record } from './components/Record';
 
 function App() {
   const [anime, setAnime] = useState(true);
@@ -31,6 +33,8 @@ function App() {
           <Routes>
             <Route path="/" element={<QandA />} />
             <Route path={`/profile/`} element={<Profile />} />
+            <Route path={`/network/`} element={<Network />} />
+            <Route path={`/Record/`} element={<Record />} />
           </Routes>
         </body>
       </div>
