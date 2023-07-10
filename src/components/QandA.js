@@ -386,7 +386,7 @@ const TestButton = styled(Button)({
     // 縦に並べる
     flexDirection: "column",
     // 下との間隔をあける
-    marginBottom: isMobile ? "10px" : "20px",
+    marginBottom: isMobile ? "10px" : "10px",
     // 青色の枠線
     border: "solid 3px #1976d2",
     padding: "25px",
