@@ -307,9 +307,9 @@ const TestButton = styled(Button)({
     border: "solid 1px #000000",
     // ボタンの文字を黒にする
     color: "#000000",
-    marginTop: "15px",
+    marginTop: isMobile ? "15px": "20px",
     // 下との間隔をあける
-    marginBottom: isMobile ? "10px" : "30px",
+    marginBottom: isMobile ? "10px" : "20px",
     // 角丸
     borderRadius: "1em",
   };
@@ -811,7 +811,7 @@ const TestButton = styled(Button)({
     // フォントを小さくする
     fontSize: "15px",
     // 白色にする
-    color: "#ffffff"
+    color: "#ffffff",
   }
   const sampleStyle = {
     // 左詰め
@@ -1029,7 +1029,7 @@ const TestButton = styled(Button)({
             </Box>
             {/* ログインアカウントのhistory */}
             <Box>
-              <Link to="record" style={tableTitleStyle_3}>あなたのレコード記録(正答率100%のみ)</Link>
+              <Box style={tableTitleStyle_3}>あなたのレコード記録(正答率100%のみ)</Box>
               <TableContainer component={Paper}>
                 <Table aria-label="customized table">
                   <TableHead>

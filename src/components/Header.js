@@ -100,6 +100,10 @@ export const Header = () => {
     navigate('/profile/');
     setAnchorEl(null);
   }
+  const handleAnaly = () => {
+    navigate('/record/');
+    setAnchorEl(null);
+  }
 
   // function get_user_name() {
   //   if (user) {
@@ -162,6 +166,7 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                <MenuItem onClick={handleAnaly}>分析</MenuItem>
                 <MenuItem onClick={handleSignOut}>SignOut</MenuItem>
               </Menu>
             </div>
