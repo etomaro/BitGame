@@ -307,7 +307,7 @@ const TestButton = styled(Button)({
     border: "solid 1px #000000",
     // ボタンの文字を黒にする
     color: "#000000",
-    marginTop: "20px",
+    marginTop: "15px",
     // 下との間隔をあける
     marginBottom: isMobile ? "10px" : "30px",
     // 角丸
