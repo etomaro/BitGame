@@ -107,7 +107,31 @@ export const QandA = () => {
       "ex_question": "0001,0000",
       "ex_answer": "16"
     },
-
+    "3": {
+      "q_text": "10進数 -> 2進数",
+      "ex_question": "17",
+      "ex_answer": "0001,0001"
+    },
+    "4": {
+      "q_text": "10進数 -> 2進数(上位4bitは固定)",
+      "ex_question": "1",
+      "ex_answer": "0000,0001"
+    },
+    "5": {
+      "q_text": "10進数 -> 2進数(下位4bitは固定)",
+      "ex_question": "16",
+      "ex_answer": "0001,0000"
+    },
+    "6": {
+      "q_text": "16進数 -> 10進数",
+      "ex_question": "0x11",
+      "ex_answer": "17"
+    },
+    "7": {
+      "q_text": "10進数 -> 16進数",
+      "ex_question": "17",
+      "ex_answer": "0x11"
+    }
   }
 
   // state
@@ -277,14 +301,15 @@ const TestButton = styled(Button)({
 
   // startボタンのスタイル
   const startButtonStyle = {
-    width: "calc(100% / 7)",
+    width: isMobile ? "130px": "170px",
     height: "70px",
     // ボーダーを黒色にする
     border: "solid 1px #000000",
     // ボタンの文字を黒にする
     color: "#000000",
+    marginTop: "20px",
     // 下との間隔をあける
-    marginBottom: isMobile ? "10px" : "50px",
+    marginBottom: isMobile ? "10px" : "30px",
     // 角丸
     borderRadius: "1em",
   };
@@ -361,9 +386,22 @@ const TestButton = styled(Button)({
     // 縦に並べる
     flexDirection: "column",
     // 下との間隔をあける
-    marginBottom: isMobile ? "30px" : "50px",
+    marginBottom: isMobile ? "10px" : "20px",
+    // 青色の枠線
+    border: "solid 3px #1976d2",
+    padding: "25px",
+    width: isMobile ? "77%": "100%",
+    // 真ん中に寄せる
+    margin: "auto",
   }
-
+  const choiceTitleStyle = {
+    marginTop: "10px",
+    // 左詰め
+    textAlign: "left",
+    fontSize: "15px",
+    // 左の余白をあける
+    marginLeft: "18px",
+  }
   const checkStyle = {
     // 丸いチェックボックスにする
     borderRadius: "50%",
@@ -778,14 +816,20 @@ const TestButton = styled(Button)({
   const sampleStyle = {
     // 左詰め
     textAlign: "left",
-     // 赤色の枠線をつける
-    border: "solid 1px #ff0000",
+     // 青色の枠線
+    border: "solid 3px #1976d2",
     padding: "15px",
-
+    fontSize: "15px",
+    width: isMobile ? "83%": "102.5%",
+    // 真ん中に寄せる
+    margin: "auto",
   }
   const sampleTitleStyle = {
     // 左詰め
     textAlign: "left",
+    fontSize: "15px",
+    // 左の余白をあける
+    marginLeft: "18px",
   }
 
   // test
@@ -800,27 +844,56 @@ const TestButton = styled(Button)({
         {/* ゲーム開始前の時 */}
         {seIsGame === 0 &&
         <>
-          {/* 問題の選択 */}
-          <Box style={choiceStyle}>
-            <FormControlLabel
-              control={<Checkbox checked={seQuestionType === "0"} onChange={() => setQuestionType("0")} name="checkedA" style={checkStyle}/>}
-              label={GAME_INFO["0"]["q_text"]}
-            />
-            <FormControlLabel
-              control={<Checkbox checked={seQuestionType === "1"} onChange={() => setQuestionType("1")} name="checkedA" />}
-              label={GAME_INFO["1"]["q_text"]}
-            />
-            <FormControlLabel
-              control={<Checkbox checked={seQuestionType === "2"} onChange={() => setQuestionType("2")} name="checkedA" />}
-              label={GAME_INFO["2"]["q_text"]}
-            />
-          </Box>
-          {/* 例題 */}
           <Box>
-            <Box style={sampleTitleStyle}>出題例</Box>
-            <Box style={sampleStyle}>
-              <Box>問題:  {GAME_INFO[seQuestionType]["ex_question"]}</Box>
-              <Box>解答:  {GAME_INFO[seQuestionType]["ex_answer"]}</Box>
+            {/* 問題の選択 */}
+            <Box style={choiceTitleStyle}>問題選択</Box>
+            <Box style={choiceStyle}>
+              <Box>
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "0"} onChange={() => setQuestionType("0")} name="checkedA"/>}
+                  label={GAME_INFO["0"]["q_text"]}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "1"} onChange={() => setQuestionType("1")} name="checkedA" />}
+                  label={GAME_INFO["1"]["q_text"]}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "2"} onChange={() => setQuestionType("2")} name="checkedA" />}
+                  label={GAME_INFO["2"]["q_text"]}
+                />
+              </Box>
+              <Box>
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "3"} onChange={() => setQuestionType("3")} name="checkedA"/>}
+                  label={GAME_INFO["3"]["q_text"]}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "4"} onChange={() => setQuestionType("4")} name="checkedA" />}
+                  label={GAME_INFO["4"]["q_text"]}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "5"} onChange={() => setQuestionType("5")} name="checkedA" />}
+                  label={GAME_INFO["5"]["q_text"]}
+                />
+              </Box>
+              <Box>
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "6"} onChange={() => setQuestionType("6")} name="checkedA"/>}
+                  label={GAME_INFO["6"]["q_text"]}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={seQuestionType === "7"} onChange={() => setQuestionType("7")} name="checkedA" />}
+                  label={GAME_INFO["7"]["q_text"]}
+                />
+              </Box>
+            </Box>
+            {/* 例題 */}
+            <Box>
+              <Box style={sampleTitleStyle}>出題例</Box>
+              <Box style={sampleStyle}>
+                <Box>問題:  {GAME_INFO[seQuestionType]["ex_question"]}</Box>
+                <Box>解答:  {GAME_INFO[seQuestionType]["ex_answer"]}</Box>
+              </Box>
             </Box>
           </Box>
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>GAME START</Button>
