@@ -39,28 +39,6 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import { blue } from '@mui/material/colors';
 import { get_users_name } from '../table/users_table';
 
-// 8bit2進数を10進数に変換する関数
-function binaryToDecimal(binary) {
-  return binary.split('').reverse().reduce((acc, curr, index) => {
-    return acc + curr * Math.pow(2, index);
-  }, 0);
-}
-
-// 画面スクロールを禁止にするコンポーネント
-function DisableScroll() {
-  useEffect(() => {
-    // body要素にoverflow: hiddenを設定
-    document.body.style.overflow = 'hidden';
-
-    // コンポーネントがアンマウントされたときにoverflowスタイルを削除
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
-
-  return null;
-}
-
 
 // QandA
 export const QandA = () => {
@@ -68,6 +46,7 @@ export const QandA = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
 
+  // ---------------------  state  ---------------------
   // initial state
   const init_state = {
     "seInNum": "",
@@ -83,7 +62,7 @@ export const QandA = () => {
     "seEndSecond": "",
     "seElapsedTime": [],
     "seLastEndTime": "",
-    "seQuestionType": 0,
+    "seQuestionType": "1",
     "seIsDebug": false,
     "seSuccessResult": [],
     "seFaultResult": [],
@@ -110,6 +89,26 @@ export const QandA = () => {
     {"rank": "4", "time": "", "update_time": ""},
     {"rank": "5", "time": "", "update_time": ""}
   ];
+
+  // game情報
+  const GAME_INFO = {
+    "0": {
+      "q_text": "2進数 -> 10進数",
+      "ex_question": "0001,0001",
+      "ex_answer": "17"
+    },
+    "1": {
+      "q_text": "2進数 -> 10進数(上位4bitは固定)",
+      "ex_question": "0000,0001",
+      "ex_answer": "1"
+    },
+    "2": {
+      "q_text": "2進数 -> 10進数(下位4bitは固定)",
+      "ex_question": "0001,0000",
+      "ex_answer": "16"
+    },
+
+  }
 
   // state
   const [seInNum, setInNum] = useState(init_state.seInNum);  // 入力された数値
@@ -147,9 +146,6 @@ export const QandA = () => {
   // useSound
   const [playCor, { stopCor, pauseCor }] = useSound(SoundCorrect);  // 正解の音
   const [playInCor, { stopInCor, pauseInCor }] = useSound(SoundInCorrect);  // 正解の音
-
-  // context 
-  const { user } = useAuthContext();
 
   // set initial state
   const setInitState = () => {
@@ -195,8 +191,15 @@ export const QandA = () => {
     console.log("seFaultResult: " + seFaultResult);
     console.log("seQuestionList: " + seQuestionList);
   }
+  // ---------------------  /state ---------------------
 
-  // use effect
+
+  // ---------------------  context ---------------------
+  const { user } = useAuthContext();
+  // ---------------------  /context ---------------------
+
+
+  // ---------------------  use effect  ---------------------
   useEffect(() => {
     // 過去の記録データをセットする
     setHistory();
@@ -205,7 +208,10 @@ export const QandA = () => {
   useEffect(() => {
     user && setHistory_login(user.uid);
   }, [user])
+  // ---------------------  /use effect  ---------------------
 
+
+  // ---------------------  デザイン  ---------------------
   // --- デフォルトのデザインを加工 ---
   // checkbox
   const TestCheckbox = styled(Checkbox)({
@@ -245,7 +251,7 @@ const TestButton = styled(Button)({
   marginBottom: isMobile ? "10px" : "50px",
 });
 
-
+// --- それぞれのデザイン定義 ---
   // 数値ボタンのスタイル
   const buttonStyle = {
     width: "calc(100% / 5)",
@@ -356,36 +362,36 @@ const TestButton = styled(Button)({
     flexDirection: "column",
     // 下との間隔をあける
     marginBottom: isMobile ? "30px" : "50px",
-
   }
 
   const checkStyle = {
     // 丸いチェックボックスにする
     borderRadius: "50%",
+  }
+  // ---------------------  /デザイン  ---------------------
 
+
+  // 画面スクロールを禁止にするコンポーネント
+  function DisableScroll() {
+    useEffect(() => {
+      // body要素にoverflow: hiddenを設定
+      document.body.style.overflow = 'hidden';
+
+      // コンポーネントがアンマウントされたときにoverflowスタイルを削除
+      return () => {
+        document.body.style.overflow = 'auto';
+      };
+    }, []);
+    return null;
   }
 
 
-
-  // 正答率を計算する関数
-  const calcRate = (done, maxCount) => {
-    // 正答数を計算
-    const goodCount = done.filter((value) => {
-      return value;
-    }).length;
-    // console.log("sedone: , ", done)
-    // console.log("good count: ", goodCount)
-    // console.log("seMaxCount: ", maxCount)
-    // 正答率を計算
-    const rate = Math.round(goodCount / maxCount * 100);
-    return rate.toString();
-  }
   // 問題を10問ランダムに作成する関数
   const createQuestionList = () => {
     let questionList = [];
     let question = "";
     
-    if (seQuestionType === 0) {
+    if (seQuestionType === "0") {
       // 10回ループ 
       for (let i = 0; i < 10; i++) {
         // 8bit2進数を10進数に変換する
@@ -398,7 +404,7 @@ const TestButton = styled(Button)({
         // 問題のリストに追加
         questionList.push(question);
       }
-    }else if (seQuestionType === 1) {
+    }else if (seQuestionType === "1") {
       for (let i = 0; i < 10; i++) {
         // 8bit2進数を10進数に変換する(上位4bitは0)
         // 0~15の乱数を作成
@@ -412,7 +418,7 @@ const TestButton = styled(Button)({
         // 問題のリストに追加
         questionList.push(question);
       }
-    }else if (seQuestionType === 2) {
+    }else if (seQuestionType === "2") {
       for (let i = 0; i < 10; i++) {
         // 8bit2進数を10進数に変換する(下位4bitは0)
         // 0~15の乱数を作成
@@ -429,6 +435,13 @@ const TestButton = styled(Button)({
     };
 
     return questionList;
+  }
+
+  // 8bit2進数を10進数に変換する関数
+  function binaryToDecimal(binary) {
+    return binary.split('').reverse().reduce((acc, curr, index) => {
+      return acc + curr * Math.pow(2, index);
+    }, 0);
   }
 
   // 数値ボタンをクリックしたときの処理
@@ -454,6 +467,21 @@ const TestButton = styled(Button)({
       okClick();
     }
   }
+
+  // 正答率を計算する関数
+  const calcRate = (done, maxCount) => {
+    // 正答数を計算
+    const goodCount = done.filter((value) => {
+      return value;
+    }).length;
+    // console.log("sedone: , ", done)
+    // console.log("good count: ", goodCount)
+    // console.log("seMaxCount: ", maxCount)
+    // 正答率を計算
+    const rate = Math.round(goodCount / maxCount * 100);
+    return rate.toString();
+  }
+
   const okClick = () => {
     // console.log(`ok button click!\nsecount: ${seCount}\nseMaxCount: ${seMaxCount}`)
     // 1つの問題の解答時間を計測
@@ -747,6 +775,18 @@ const TestButton = styled(Button)({
     // 白色にする
     color: "#ffffff"
   }
+  const sampleStyle = {
+    // 左詰め
+    textAlign: "left",
+     // 赤色の枠線をつける
+    border: "solid 1px #ff0000",
+    padding: "15px",
+
+  }
+  const sampleTitleStyle = {
+    // 左詰め
+    textAlign: "left",
+  }
 
   // test
   const testDB_read = ()=> {
@@ -763,17 +803,25 @@ const TestButton = styled(Button)({
           {/* 問題の選択 */}
           <Box style={choiceStyle}>
             <FormControlLabel
-              control={<Checkbox checked={seQuestionType === 0} onChange={() => setQuestionType(0)} name="checkedA" style={checkStyle}/>}
-              label="2進数 -> 10進数"
+              control={<Checkbox checked={seQuestionType === "0"} onChange={() => setQuestionType("0")} name="checkedA" style={checkStyle}/>}
+              label={GAME_INFO["0"]["q_text"]}
             />
             <FormControlLabel
-              control={<Checkbox checked={seQuestionType === 1} onChange={() => setQuestionType(1)} name="checkedA" />}
-              label="2進数 -> 10進数(上位4bitは0)"
+              control={<Checkbox checked={seQuestionType === "1"} onChange={() => setQuestionType("1")} name="checkedA" />}
+              label={GAME_INFO["1"]["q_text"]}
             />
             <FormControlLabel
-              control={<Checkbox checked={seQuestionType === 2} onChange={() => setQuestionType(2)} name="checkedA" />}
-              label="2進数 -> 10進数(下位4bitは0)"
+              control={<Checkbox checked={seQuestionType === "2"} onChange={() => setQuestionType("2")} name="checkedA" />}
+              label={GAME_INFO["2"]["q_text"]}
             />
+          </Box>
+          {/* 例題 */}
+          <Box>
+            <Box style={sampleTitleStyle}>出題例</Box>
+            <Box style={sampleStyle}>
+              <Box>問題:  {GAME_INFO[seQuestionType]["ex_question"]}</Box>
+              <Box>解答:  {GAME_INFO[seQuestionType]["ex_answer"]}</Box>
+            </Box>
           </Box>
           <Button variant="contained" style={startButtonStyle} onClick={startClick}>GAME START</Button>
           {/* テスト用ボタン */}
@@ -795,7 +843,7 @@ const TestButton = styled(Button)({
                   </TableHead>
                   <TableBody>
                     {/* type=0の時 */}
-                    {seQuestionType === 0 &&
+                    {seQuestionType === "0" &&
                       allRecHistory_zero.map((row) => (
                         // 1位の時は色を変える
                         (row.rank==="1") ? 
@@ -814,7 +862,7 @@ const TestButton = styled(Button)({
                           </StyledTableRow>
                     ))}
                     {/* type=1の時 */}
-                    {seQuestionType === 1 &&
+                    {seQuestionType === "1" &&
                       allRecHistory_one.map((row) => (
                         // 1位の時は色を変える
                         (row.rank==="1") ? 
@@ -833,7 +881,7 @@ const TestButton = styled(Button)({
                           </StyledTableRow>
                     ))}
                     {/* type=2の時 */}
-                    {seQuestionType === 2 &&
+                    {seQuestionType === "2" &&
                       allRecHistory_two.map((row) => (
                         // 1位の時は色を変える
                         (row.rank==="1") ? 
@@ -870,7 +918,7 @@ const TestButton = styled(Button)({
                   </TableHead>
                   <TableBody>
                     {/* type=0の時 */}
-                    {seQuestionType === 0 &&
+                    {seQuestionType === "0" &&
                       allHistory_zero.map((row) => (
                         <StyledTableRow key={row.rank}>
                           <StyledTableCell align="center">{row.name}</StyledTableCell>
@@ -881,7 +929,7 @@ const TestButton = styled(Button)({
                       ))
                     }
                     {/* type=1の時 */}
-                    {seQuestionType === 1 &&
+                    {seQuestionType === "1" &&
                       allHistory_one.map((row) => (
                         <StyledTableRow key={row.rank}>
                           <StyledTableCell align="center">{row.name}</StyledTableCell>
@@ -892,7 +940,7 @@ const TestButton = styled(Button)({
                       )) 
                     }
                     {/* type=0の時 */}
-                    {seQuestionType === 2 &&
+                    {seQuestionType === "2" &&
                       allHistory_two.map((row) => (
                         <StyledTableRow key={row.rank}>
                           <StyledTableCell align="center">{row.name}</StyledTableCell>
@@ -920,7 +968,7 @@ const TestButton = styled(Button)({
                   </TableHead>
                   <TableBody>
                     {/* type=0の時 */}
-                    {seQuestionType === 0 &&
+                    {seQuestionType === "0" &&
                       yourRecHistory_zero.map((row) => (
                         <StyledTableRow key={row.rank}>
                           <StyledTableCell align="center">{row.rank}</StyledTableCell>
@@ -930,7 +978,7 @@ const TestButton = styled(Button)({
                       ))
                     }
                     {/* type=1の時 */}
-                    {seQuestionType === 1 &&
+                    {seQuestionType === "1" &&
                       yourRecHistory_one.map((row) => (
                         <StyledTableRow key={row.rank}>
                           <StyledTableCell align="center">{row.rank}</StyledTableCell>
@@ -940,7 +988,7 @@ const TestButton = styled(Button)({
                       ))
                     }
                     {/* type=2の時 */}
-                    {seQuestionType === 2 &&
+                    {seQuestionType === "2" &&
                       yourRecHistory_two.map((row) => (
                         <StyledTableRow key={row.rank}>
                           <StyledTableCell align="center">{row.rank}</StyledTableCell>

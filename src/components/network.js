@@ -10,6 +10,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import Checkbox from "@mui/material/Checkbox";
 import { pink } from '@mui/material/colors';
+import { MaidAnimation } from './MaidAnimation';
 
 
 export const Network = () => {
@@ -33,6 +34,7 @@ export const Network = () => {
         <>
         <Box>ネットワーク</Box>
         <Button onClick={getLocation}>位置情報を取得する</Button>
+        <MaidAnimation />
         </>
 
     )
