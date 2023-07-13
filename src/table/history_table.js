@@ -161,7 +161,7 @@ export const get_history = async (q_type, question_type, user_id) => {
 
         get_history_result.push(new_obj)
     })
-
+    // console.log("type: ", question_type)
     // console.log("get_history_result: ", get_history_result)
 
     return get_history_result

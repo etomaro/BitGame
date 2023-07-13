@@ -93,42 +93,50 @@ export const QandA = () => {
   // game情報
   const GAME_INFO = {
     "0": {
-      "q_text": "2進数 -> 10進数",
+      "q_choice_text": "2進数 -> 10進数",
+      "q_text": "2進数を10進数に変換してください",
       "ex_question": "0001,0001",
       "ex_answer": "17"
     },
     "1": {
-      "q_text": "2進数 -> 10進数(上位4bitは固定)",
+      "q_choice_text": "2進数(上位4bitは固定) -> 10進数",
+      "q_text": "2進数を10進数に変換してください",
       "ex_question": "0000,0001",
       "ex_answer": "1"
     },
     "2": {
-      "q_text": "2進数 -> 10進数(下位4bitは固定)",
+      "q_choice_text": "2進数(下位4bitは固定) -> 10進数",
+      "q_text": "2進数を10進数に変換してください",
       "ex_question": "0001,0000",
       "ex_answer": "16"
     },
     "3": {
-      "q_text": "10進数 -> 2進数",
+      "q_choice_text": "10進数 -> 2進数",
+      "q_text": "10進数を2進数に変換してください",
       "ex_question": "17",
       "ex_answer": "0001,0001"
     },
     "4": {
-      "q_text": "10進数 -> 2進数(上位4bitは固定)",
+      "q_choice_text": "10進数 -> 2進数(上位4bitは固定)",
+      "q_text": "10進数を2進数に変換してください",
       "ex_question": "1",
       "ex_answer": "0000,0001"
     },
     "5": {
-      "q_text": "10進数 -> 2進数(下位4bitは固定)",
+      "q_choice_text": "10進数 -> 2進数(下位4bitは固定)",
+      "q_text": "10進数を2進数に変換してください",
       "ex_question": "16",
       "ex_answer": "0001,0000"
     },
     "6": {
-      "q_text": "16進数 -> 10進数",
+      "q_choice_text": "16進数 -> 10進数",
+      "q_text": "16進数を10進数に変換してください",
       "ex_question": "0x11",
       "ex_answer": "17"
     },
     "7": {
-      "q_text": "10進数 -> 16進数",
+      "q_choice_text": "10進数 -> 16進数",
+      "q_text": "10進数を16進数に変換してください",
       "ex_question": "17",
       "ex_answer": "0x11"
     }
@@ -160,12 +168,27 @@ export const QandA = () => {
   const [allRecHistory_zero, setAllRecHistory_zero] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:0)
   const [allRecHistory_one, setAllRecHistory_one] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:1)
   const [allRecHistory_two, setAllRecHistory_two] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:2)
+  const [allRecHistory_three, setAllRecHistory_three] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:3)
+  const [allRecHistory_four, setAllRecHistory_four] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:4)
+  const [allRecHistory_five, setAllRecHistory_five] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:5)
+  const [allRecHistory_six, setAllRecHistory_six] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:6)
+  const [allRecHistory_seven, setAllRecHistory_seven] = useState(init_allRecHistory);  // 全ユーザーのレコード記録(type:7)
   const [allHistory_zero, setAllHistory_zero] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:0)
   const [allHistory_one, setAllHistory_one] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:1)
   const [allHistory_two, setAllHistory_two] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:2)
+  const [allHistory_three, setAllHistory_three] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:3)
+  const [allHistory_four, setAllHistory_four] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:4)
+  const [allHistory_five, setAllHistory_five] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:5)
+  const [allHistory_six, setAllHistory_six] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:6)
+  const [allHistory_seven, setAllHistory_seven] = useState(init_allHistory);  // 全ユーザーの直近の記録(type:7)
   const [yourRecHistory_zero, setyourRecHistory_zero] = useState(init_yourRecHistory);  // 自分の記録(type:0)
   const [yourRecHistory_one, setyourRecHistory_one] = useState(init_yourRecHistory);  // 自分の記録(type:1)
   const [yourRecHistory_two, setyourRecHistory_two] = useState(init_yourRecHistory);  // 自分の記録(type:2)
+  const [yourRecHistory_three, setyourRecHistory_three] = useState(init_yourRecHistory);  // 自分の記録(type:3)
+  const [yourRecHistory_four, setyourRecHistory_four] = useState(init_yourRecHistory);  // 自分の記録(type:4)
+  const [yourRecHistory_five, setyourRecHistory_five] = useState(init_yourRecHistory);  // 自分の記録(type:5)
+  const [yourRecHistory_six, setyourRecHistory_six] = useState(init_yourRecHistory);  // 自分の記録(type:6)
+  const [yourRecHistory_seven, setyourRecHistory_seven] = useState(init_yourRecHistory);  // 自分の記録(type:7)
 
   // useSound
   const [playCor, { stopCor, pauseCor }] = useSound(SoundCorrect);  // 正解の音
@@ -276,10 +299,10 @@ const TestButton = styled(Button)({
 });
 
 // --- それぞれのデザイン定義 ---
-  // 数値ボタンのスタイル
+  // 数値ボタンのスタイル(active)
   const buttonStyle = {
-    width: "calc(100% / 5)",
-    height: "100px",
+    width: isMobile ? "70px": "100px",
+    height: isMobile ? "70px": "100px",
     // 背景を薄水色にする
     backgroundColor: "#e0ffff",
     // ボーダーを黒色にする
@@ -287,6 +310,18 @@ const TestButton = styled(Button)({
     // ボタンの文字を黒にする
     color: "#000000",
   };
+  // 数値ボタンのスタイル(disactive)
+  const buttonDisStyle = {
+    width: isMobile ? "70px": "100px",
+    height: isMobile ? "70px": "100px",
+    // 背景を薄暗く色にする
+    backgroundColor: "#808080",
+    // ボーダーを黒色にする
+    border: "solid 1px #000000",
+    // ボタンの文字を黒にする
+    color: "#000000",
+  }
+
   // okボタンのスタイル
   const okButtonStyle = {
     width: "calc(100% / 7)",
@@ -348,10 +383,20 @@ const TestButton = styled(Button)({
     height: "50px",
     marginBottom: "30px",
   };
+  const inputStyle_half = {
+    // 背景を薄水色にする
+    backgroundColor: "#e0ffff",
+    // ボタンの文字を黒にする
+    color: "#000000",
+    height: "50px",
+    marginBottom: "30px",
+    width: "105px",
+  }
+
   // textのスタイル
   const textStyle = {
     // フォントサイズを大きくする
-    fontSize: "25px",
+    fontSize: isMobile ? "20px" : "25px",
     // テキストの色を青にする
     color: "#e0ffff",
     // 下の余白をあける
@@ -430,9 +475,8 @@ const TestButton = styled(Button)({
     let question = "";
     
     if (seQuestionType === "0") {
-      // 10回ループ 
+      // 0. 2進数を10問作成
       for (let i = 0; i < 10; i++) {
-        // 8bit2進数を10進数に変換する
         // 0~255の乱数を作成
         const num = Math.floor(Math.random() * 256);
         // 2進数に変換
@@ -443,8 +487,8 @@ const TestButton = styled(Button)({
         questionList.push(question);
       }
     }else if (seQuestionType === "1") {
+      // 1. 2進数を10問作成(上位4bitは0)
       for (let i = 0; i < 10; i++) {
-        // 8bit2進数を10進数に変換する(上位4bitは0)
         // 0~15の乱数を作成
         const num = Math.floor(Math.random() * 16);
         // 2進数に変換
@@ -457,8 +501,8 @@ const TestButton = styled(Button)({
         questionList.push(question);
       }
     }else if (seQuestionType === "2") {
+      // 2. 2進数を10問作成(下位4bitは0)
       for (let i = 0; i < 10; i++) {
-        // 8bit2進数を10進数に変換する(下位4bitは0)
         // 0~15の乱数を作成
         const num = Math.floor(Math.random() * 16);
         // 2進数に変換
@@ -470,7 +514,56 @@ const TestButton = styled(Button)({
         // 問題のリストに追加
         questionList.push(question);
       }
-    };
+    }else if (seQuestionType === "3") {
+      // 3. 10進数を10問作成
+      for (let i = 0; i < 10; i++) {
+        // 0~255の乱数を作成
+        const num = Math.floor(Math.random() * 256);
+        questionList.push(num.toString())
+      };
+    }else if (seQuestionType === "4") {
+      // 4. 10進数を10問作成(2進数変換した際に上位4bitは0)
+      for (let i = 0; i < 10; i++) {
+        // 0~15の乱数を作成
+        const num = Math.floor(Math.random() * 16);
+        questionList.push(num.toString())
+      };
+    }else if (seQuestionType === "5") {
+      // 5. 10進数を10問作成(2進数変換した際に下位4bitは0)
+      for (let i = 0; i < 10; i++) {
+        // 0~15の乱数を作成
+        const num = Math.floor(Math.random() * 16);
+        // 2進数に変換
+        const binary = num.toString(2);
+        // 4桁になるように0を追加
+        question = binary.padStart(4, "0");
+        // 8桁になるように0を追加
+        question = question.concat("0000");
+        // 2進数を10進数に変換
+        question = binaryToDecimal(question);
+        questionList.push(question.toString())
+      };
+    }else if (seQuestionType === "6") {
+      // 6. 16進数を10問作成
+      for (let i = 0; i < 10; i++) {
+        // 0~255の乱数を作成
+        const num = Math.floor(Math.random() * 256);
+        // 16進数に変換
+        const hex = num.toString(16);
+        // 大文字にする
+        question = hex.toUpperCase();
+        // 問題のリストに追加
+        questionList.push(question);
+      };
+    }else if (seQuestionType === "7") {
+      // 7. 10進数を10問作成(16進数変換した際に下位4bitは0)
+      for (let i = 0; i < 10; i++) {
+        // 0~255の乱数を作成
+        const num = Math.floor(Math.random() * 256);
+        questionList.push(num.toString())
+      };
+    }
+    console.log("作成した問題: ", questionList)
 
     return questionList;
   }
@@ -521,7 +614,18 @@ const TestButton = styled(Button)({
   }
 
   const okClick = () => {
-    // console.log(`ok button click!\nsecount: ${seCount}\nseMaxCount: ${seMaxCount}`)
+    // 解答が2進数の場合、8桁になるように0を追加
+    console.log("seInNum: ", seInNum)
+    let correct = seInNum;
+    if (seQuestionType === "3") {
+      correct = correct.padStart(8, "0");
+    }else if (seQuestionType === "4") {
+      correct = "0000" + correct;
+    }else if(seQuestionType === "5") {
+      correct = correct.padStart(4, "0")
+      correct = correct + "0000";
+    }
+
     // 1つの問題の解答時間を計測
     const oneEndTime = new Date();
     let newElapsedTime = [];
@@ -538,13 +642,34 @@ const TestButton = styled(Button)({
       setLastEndTime(oneEndTime);
     }
     
-    // 問題を10進数に変換
-    const question = binaryToDecimal(seQuestion);
-    // questionを文字に変換
-    const questionStr = question.toString();
+    // 答えを作成
+    let questionStr = "";
+    if (seQuestionType === "0" || seQuestionType === "1" || seQuestionType === "2") {
+      // 問題を10進数に変換
+      const question = binaryToDecimal(seQuestion);
+      // questionを文字に変換
+      questionStr = question.toString();
+    }else if (seQuestionType === "3" || seQuestionType === "4" || seQuestionType === "5") {
+      // 問題を2進数に変換
+      const question = parseInt(seQuestion, 10).toString(2);
+      // 8桁になるように0を追加
+      questionStr = question.padStart(8, "0");
+    }else if (seQuestionType === "6") {
+      // 問題を16進数から10進数に変換
+      const question = parseInt(seQuestion, 16).toString(10);
+      questionStr = question.toString();
+    }else if (seQuestionType === "7") {
+      // 問題の10進数を16進数に変換
+      const question = parseInt(seQuestion, 10).toString(16);
+      questionStr = question.toUpperCase();
+    }
+
     // decimalとquestionが一致したら正解
     let newDone = [];
-    if (seInNum === questionStr) {
+    console.log("正解: ", correct)
+    console.log("解答: ", questionStr)
+    console.log("seQuestion: ", seQuestion)
+    if (correct === questionStr || correct.toUpperCase() === questionStr) {
       // 正解した問題を配列に追加
       newDone = [...sedone, true];
       setDone(newDone);
@@ -601,7 +726,7 @@ const TestButton = styled(Button)({
       for (let i = 0; i < seMaxCount; i++) {
         history_q_data.push({
           "time": newElapsedTime[i],
-          "question_id": binaryToDecimal(seQuestionList[i]).toString(),
+          "question_id": seQuestionList[i].toString(),
           "is_correct": newDone[i],
         })
       }
@@ -709,6 +834,21 @@ const TestButton = styled(Button)({
     get_history("all_record", "2", user_id).then((result) => {
       setAllRecHistory_two(result);
     });
+    get_history("all_record", "3", user_id).then((result) => {
+      setAllRecHistory_three(result);
+    });
+    get_history("all_record", "4", user_id).then((result) => {
+      setAllRecHistory_four(result);
+    });
+    get_history("all_record", "5", user_id).then((result) => {
+      setAllRecHistory_five(result);
+    });
+    get_history("all_record", "6", user_id).then((result) => {
+      setAllRecHistory_six(result);
+    });
+    get_history("all_record", "7", user_id).then((result) => {
+      setAllRecHistory_seven(result);
+    });
     // 2. 全ユーザーの直近の記録を取得
     get_history("all", "0", user_id).then((result) => {
       setAllHistory_zero(result);
@@ -718,6 +858,21 @@ const TestButton = styled(Button)({
     });
     get_history("all", "2", user_id).then((result) => {
       setAllHistory_two(result);
+    });
+    get_history("all", "3", user_id).then((result) => {
+      setAllHistory_three(result);
+    });
+    get_history("all", "4", user_id).then((result) => {
+      setAllHistory_four(result);
+    });
+    get_history("all", "5", user_id).then((result) => {
+      setAllHistory_five(result);
+    });
+    get_history("all", "6", user_id).then((result) => {
+      setAllHistory_six(result);
+    });
+    get_history("all", "7", user_id).then((result) => {
+      setAllHistory_seven(result);
     });
   }
 
@@ -734,6 +889,21 @@ const TestButton = styled(Button)({
       get_history("your_record", "2", user_id).then((result) => {
         setyourRecHistory_two(result);
       });
+      get_history("your_record", "3", user_id).then((result) => {
+        setyourRecHistory_three(result);
+      });
+      get_history("your_record", "4", user_id).then((result) => {
+        setyourRecHistory_four(result);
+      });
+      get_history("your_record", "5", user_id).then((result) => {
+        setyourRecHistory_five(result);
+      });
+      get_history("your_record", "6", user_id).then((result) => {
+        setyourRecHistory_six(result);
+      });
+      get_history("your_record", "7", user_id).then((result) => {
+        setyourRecHistory_seven(result);
+      });   
     }
     }
 
@@ -851,39 +1021,39 @@ const TestButton = styled(Button)({
               <Box>
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "0"} onChange={() => setQuestionType("0")} name="checkedA"/>}
-                  label={GAME_INFO["0"]["q_text"]}
+                  label={GAME_INFO["0"]["q_choice_text"]}
                 />
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "1"} onChange={() => setQuestionType("1")} name="checkedA" />}
-                  label={GAME_INFO["1"]["q_text"]}
+                  label={GAME_INFO["1"]["q_choice_text"]}
                 />
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "2"} onChange={() => setQuestionType("2")} name="checkedA" />}
-                  label={GAME_INFO["2"]["q_text"]}
+                  label={GAME_INFO["2"]["q_choice_text"]}
                 />
               </Box>
               <Box>
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "3"} onChange={() => setQuestionType("3")} name="checkedA"/>}
-                  label={GAME_INFO["3"]["q_text"]}
+                  label={GAME_INFO["3"]["q_choice_text"]}
                 />
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "4"} onChange={() => setQuestionType("4")} name="checkedA" />}
-                  label={GAME_INFO["4"]["q_text"]}
+                  label={GAME_INFO["4"]["q_choice_text"]}
                 />
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "5"} onChange={() => setQuestionType("5")} name="checkedA" />}
-                  label={GAME_INFO["5"]["q_text"]}
+                  label={GAME_INFO["5"]["q_choice_text"]}
                 />
               </Box>
               <Box>
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "6"} onChange={() => setQuestionType("6")} name="checkedA"/>}
-                  label={GAME_INFO["6"]["q_text"]}
+                  label={GAME_INFO["6"]["q_choice_text"]}
                 />
                 <FormControlLabel
                   control={<Checkbox checked={seQuestionType === "7"} onChange={() => setQuestionType("7")} name="checkedA" />}
-                  label={GAME_INFO["7"]["q_text"]}
+                  label={GAME_INFO["7"]["q_choice_text"]}
                 />
               </Box>
             </Box>
@@ -972,6 +1142,101 @@ const TestButton = styled(Button)({
                             <StyledTableCell align="center">{row.update_time}</StyledTableCell>
                           </StyledTableRow>
                     ))}
+                    {/* type=3の時 */}
+                    {seQuestionType === "3" &&
+                      allRecHistory_three.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                    ))}
+                    {/* type=4の時 */}
+                    {seQuestionType === "4" &&
+                      allRecHistory_four.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                    ))}
+                    {/* type=5の時 */}
+                    {seQuestionType === "5" &&
+                      allRecHistory_five.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                    ))}
+                    {/* type=6の時 */}
+                    {seQuestionType === "6" &&
+                      allRecHistory_six.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                    ))}
+                    {/* type=7の時 */}
+                    {seQuestionType === "7" &&
+                      allRecHistory_seven.map((row) => (
+                        // 1位の時は色を変える
+                        (row.rank==="1") ? 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.time}</StyledTableCell>
+                            <StyledTableCell align="center" style={{color: "#ff0000", fontWeight: "bold"}}>{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                        : 
+                          <StyledTableRow key={row.rank}>
+                            <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                            <StyledTableCell align="center">{row.name}</StyledTableCell>
+                            <StyledTableCell align="center">{row.time}</StyledTableCell>
+                            <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                          </StyledTableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -1012,9 +1277,64 @@ const TestButton = styled(Button)({
                         </StyledTableRow>
                       )) 
                     }
-                    {/* type=0の時 */}
+                    {/* type=2の時 */}
                     {seQuestionType === "2" &&
                       allHistory_two.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=3の時 */}
+                    {seQuestionType === "3" &&
+                      allHistory_three.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=4の時 */}
+                    {seQuestionType === "4" &&
+                      allHistory_four.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=5の時 */}
+                    {seQuestionType === "5" &&
+                      allHistory_five.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=6の時 */}
+                    {seQuestionType === "6" &&
+                      allHistory_six.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.name}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.poc}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=7の時 */}
+                    {seQuestionType === "7" &&
+                      allHistory_seven.map((row) => (
                         <StyledTableRow key={row.rank}>
                           <StyledTableCell align="center">{row.name}</StyledTableCell>
                           <StyledTableCell align="center">{row.time}</StyledTableCell>
@@ -1070,6 +1390,56 @@ const TestButton = styled(Button)({
                         </StyledTableRow>
                       ))
                     }
+                    {/* type=3の時 */}
+                    {seQuestionType === "3" &&
+                      yourRecHistory_three.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=4の時 */}
+                    {seQuestionType === "4" &&
+                      yourRecHistory_four.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=5の時 */}
+                    {seQuestionType === "5" &&
+                      yourRecHistory_five.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=6の時 */}
+                    {seQuestionType === "6" &&
+                      yourRecHistory_six.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
+                    {/* type=7の時 */}
+                    {seQuestionType === "7" &&
+                      yourRecHistory_seven.map((row) => (
+                        <StyledTableRow key={row.rank}>
+                          <StyledTableCell align="center">{row.rank}</StyledTableCell>
+                          <StyledTableCell align="center">{row.time}</StyledTableCell>
+                          <StyledTableCell align="center">{row.update_time}</StyledTableCell>
+                        </StyledTableRow>
+                      ))
+                    }
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -1080,31 +1450,157 @@ const TestButton = styled(Button)({
         {/* ゲーム中の時 */}
         {seIsGame === 1 &&
           <Box>
-          <Box style={textStyle}>2進数を10進数に変えてください</Box>
+          <Box style={textStyle}>{GAME_INFO[seQuestionType]["q_text"]}</Box>
           <Box fontSize="midium" mb="20px">{seCount}問目</Box>
           <Box mb={3}> 
-            {seQuestion[0]+seQuestion[1]+seQuestion[2]+seQuestion[3]+","
-              +seQuestion[4]+seQuestion[5]+seQuestion[6]+seQuestion[7]} ->
-            {/* 入力 */}
-            <TextField autoFocus={isMobile ? false : true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
+            {/* 問題が2進数の場合 */}
+            {
+              (seQuestionType === "0" || seQuestionType === "1" || seQuestionType === "2") &&
+                seQuestion[0]+seQuestion[1]+seQuestion[2]+seQuestion[3]+","
+                +seQuestion[4]+seQuestion[5]+seQuestion[6]+seQuestion[7] + " -> "
+            }
+            {/* 問題が10進数の場合 */}
+            {
+              (seQuestionType === "3" || seQuestionType === "4" || seQuestionType === "5" || seQuestionType === "7") &&
+                seQuestion + " -> "
+            }
+            {/* 問題が16進数の場合 */}
+            {
+              (seQuestionType === "6") &&
+                "0x" + seQuestion + " -> "
+            }
+            {/* --- 入力 --- */}
+            {/* 解答が2進数の場合 */}
+            {
+              seQuestionType === "3" &&
+                <TextField autoFocus={isMobile ? false : true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
+            }
+            {/* 解答が2進数(上位4bit固定の場合) */}
+            {
+              seQuestionType === "4" &&
+                <>
+                  0000,
+                  <TextField autoFocus={isMobile ? false : true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle_half}/>
+                </>
+
+            }
+            {/* 問題が2進数(下位4bit固定の場合) */}
+            {
+              seQuestionType === "5" &&
+                <>
+                  <TextField autoFocus={isMobile ? false : true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle_half}/>
+                  ,0000
+                </>
+            }
+            {/* 問題が10進数 */}
+            {
+              (seQuestionType === "0" || seQuestionType === "1" || seQuestionType === "2" || seQuestionType === "6") &&
+                <TextField autoFocus={isMobile ? false : true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle}/>
+            }
+            {/* 問題が16進数 */}
+            {
+              seQuestionType === "7" &&
+                <>
+                  0x
+                  <TextField autoFocus={isMobile ? false : true} onChange={inputChange} id="standard-basic" value={seInNum} style={inputStyle_half}/>
+                </>
+            }
             {/* 削除ボタン */}
             <IconButton onClick={deleteClick} aria-label="delete" color="primary">
               <DeleteIcon fontSize="large"/>
             </IconButton>
           </Box>
-          {/* 数値ボタン */}
-          <Box display="flex" flexWrap="wrap">
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>0</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>1</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>2</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>3</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>4</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>5</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>6</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>7</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>8</Button>
-            <Button variant="contained" style={buttonStyle} onClick={btnClick}>9</Button>
-          </Box>
+          {/* --- 数値ボタン 真ん中に配置 --- */}
+          {/* 解答が2進数の場合 */}
+          {
+            (seQuestionType === "3" || seQuestionType === "4" || seQuestionType === "5") &&
+              <>
+                <Box display="flex" flexWrap="wrap">
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>0</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>1</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>2</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>3</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>4</Button>
+                </Box>
+                <Box display="flex" flexWrap="wrap">
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>5</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>6</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>7</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>8</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>9</Button>
+                </Box>
+                <Box display="flex" flexWrap="wrap">
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>A</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>B</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>C</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>D</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>E</Button>
+                </Box>
+                <Box display="flex" flexWrap="wrap">
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>F</Button>
+                </Box>
+              </>
+          }
+          {/* 解答が10進数の場合 */}
+          {
+            (seQuestionType === "0" || seQuestionType === "1" || seQuestionType === "2" || seQuestionType === "6") &&
+              <>
+                <Box display="flex" flexWrap="wrap">
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>0</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>1</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>2</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>3</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>4</Button>
+                </Box>
+                <Box display="flex" flexWrap="wrap">
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>5</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>6</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>7</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>8</Button>
+                  <Button variant="contained" style={buttonStyle} onClick={btnClick}>9</Button>
+                </Box>
+                <Box display="flex" flexWrap="wrap">
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>A</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>B</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>C</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>D</Button>
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>E</Button>
+                </Box>
+                <Box display="flex" flexWrap="wrap">
+                  <Button disabled variant="contained" style={buttonDisStyle} onClick={btnClick}>F</Button>
+                </Box>
+              </>
+          }
+          {/* 解答が16進数の場合 */}
+          {
+            seQuestionType === "7" &&
+            <>
+              <Box display="flex" flexWrap="wrap">
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>0</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>1</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>2</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>3</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>4</Button>
+              </Box>
+              <Box display="flex" flexWrap="wrap">
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>5</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>6</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>7</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>8</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>9</Button>
+              </Box>
+              <Box display="flex" flexWrap="wrap">
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>A</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>B</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>C</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>D</Button>
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>E</Button>
+              </Box>
+              <Box display="flex" flexWrap="wrap">
+                <Button variant="contained" style={buttonStyle} onClick={btnClick}>F</Button>
+              </Box>
+            </>
+          }
           {/* okボタン */}
           <Button
             variant="contained" disabled={seIsGame !== 1} style={okButtonStyle} onClick={okClick}>ok</Button>
