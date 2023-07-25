@@ -46,7 +46,6 @@ export const Header = () => {
   const navigate = useNavigate();
   // context 
   const { user } = useAuthContext();
-  console.log("red")
 
 
   useEffect(() => {
