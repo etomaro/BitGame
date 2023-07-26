@@ -12,6 +12,7 @@ import { Record } from './components/Record';
 import { useMediaQuery, useTheme } from '@mui/material';
 
 
+
 function App() {
   const [anime, setAnime] = useState(true);
 
