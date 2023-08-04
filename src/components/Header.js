@@ -1,6 +1,13 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +26,7 @@ import appIcon_left from '../assets/appIcon_left.png';
 import appIcon_right from '../assets/appIcon_right.png';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { backdropClasses } from '@mui/material';
 
 
 // button style
@@ -33,6 +41,7 @@ let inputKey = [];
 export const Header = () => {
   // const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElTab, setAnchorElTab] = React.useState(null);
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(appIcon)
   const [pos, setPos] = useState(50);  // iconの位置
@@ -80,9 +89,14 @@ export const Header = () => {
     // console.log("event: ", event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
+  const handleTab = (event) => {
+    // console.log("event: ", event.currentTarget)
+    setAnchorElTab(event.currentTarget);
+  };
 
   const handleClose = () => {
     setAnchorEl(null);
+    setAnchorElTab(null);
   };
   const handleSignOut = () => {
     // 確認用のダイアログを表示
@@ -103,8 +117,14 @@ export const Header = () => {
     signIn();
     setAnchorEl(null);
   }
-  // appbar style
 
+  const handleDrawer = (url) => {
+    setAnchorElTab(null);
+    navigate(url);
+  }
+
+
+  // appbar style
   const AppBarStyle_func = () => {
     // login時: stg->青色、prod->赤色
     // logout時はグレー
@@ -149,61 +169,61 @@ export const Header = () => {
       PC: Max-50px -> 50px まで移動
       Mobile: Max-30px -> 30px まで移動
     */
-  const width = window.innerWidth;  // 画面の横幅を取得
-  if (is_icon_left)  {
-    // 1. アイコンが左の場合(初期状態)
-    setIcon(appIcon_left)
     const width = window.innerWidth;  // 画面の横幅を取得
-    // 最後の位置
-    const lastPos = isMobile ? width-100 : width - 110;  // 最初の位置が50pxなので
-    // アイコンが左が右か(偶数の時右、奇数の時左)
-    let index = 1;
-    let pos_tmp = isMobile ? pos_mobile : pos;
-    const interval_id = setInterval(() => {
-      const is_right = index % 2 === 0 ? false : true;  // 奇数の時左、偶数の時右
-      pos_tmp += 20;
-      isMobile ? setPos_mobile(pos_tmp) : setPos(pos_tmp)
-      if (is_right) {
-        setIcon(appIcon_right)
-      } else {
-        setIcon(appIcon_left)
-      }
-      index++;
-      
-      // 処理を抜ける
-      if(pos_tmp >= lastPos) {
-        setIs_icon_left(false)
-        setIcon(appIcon)
-        clearInterval(interval_id);
-      }
-    }, 250);
-  } else {
-    // 1. アイコンが右の場合
-    console.log("右！")
-    setIcon(appIcon_right)
-    // 最後の位置
-    const lastPos = isMobile ? 30 : 50;
-    let index = 1;
-    let pos_tmp = isMobile ? pos_mobile : pos;
-    const interval_id = setInterval(() => {
-      const is_right = index % 2 === 0 ? false : true;  // 奇数の時左、偶数の時右
-      pos_tmp -= 20;
-      isMobile ? setPos_mobile(pos_tmp) : setPos(pos_tmp)
-      if (is_right) {
-        setIcon(appIcon_right)
-      } else {
-        setIcon(appIcon_left)
-      }
-      index++;
+    if (is_icon_left)  {
+      // 1. アイコンが左の場合(初期状態)
+      setIcon(appIcon_left)
+      const width = window.innerWidth;  // 画面の横幅を取得
+      // 最後の位置
+      const lastPos = isMobile ? width-100 : width - 110;  // 最初の位置が50pxなので
+      // アイコンが左が右か(偶数の時右、奇数の時左)
+      let index = 1;
+      let pos_tmp = isMobile ? pos_mobile : pos;
+      const interval_id = setInterval(() => {
+        const is_right = index % 2 === 0 ? false : true;  // 奇数の時左、偶数の時右
+        pos_tmp += 20;
+        isMobile ? setPos_mobile(pos_tmp) : setPos(pos_tmp)
+        if (is_right) {
+          setIcon(appIcon_right)
+        } else {
+          setIcon(appIcon_left)
+        }
+        index++;
+        
+        // 処理を抜ける
+        if(pos_tmp >= lastPos) {
+          setIs_icon_left(false)
+          setIcon(appIcon)
+          clearInterval(interval_id);
+        }
+      }, 250);
+    } else {
+      // 1. アイコンが右の場合
+      console.log("右！")
+      setIcon(appIcon_right)
+      // 最後の位置
+      const lastPos = isMobile ? 30 : 50;
+      let index = 1;
+      let pos_tmp = isMobile ? pos_mobile : pos;
+      const interval_id = setInterval(() => {
+        const is_right = index % 2 === 0 ? false : true;  // 奇数の時左、偶数の時右
+        pos_tmp -= 20;
+        isMobile ? setPos_mobile(pos_tmp) : setPos(pos_tmp)
+        if (is_right) {
+          setIcon(appIcon_right)
+        } else {
+          setIcon(appIcon_left)
+        }
+        index++;
 
-      // 処理を抜ける
-      if(pos_tmp <= lastPos) {
-        setIs_icon_left(true)
-        setIcon(appIcon)
-        clearInterval(interval_id);
-      }
-    }, 250);
-  }
+        // 処理を抜ける
+        if(pos_tmp <= lastPos) {
+          setIs_icon_left(true)
+          setIcon(appIcon)
+          clearInterval(interval_id);
+        }
+      }, 250);
+    }
   }
 
   return (
@@ -213,15 +233,39 @@ export const Header = () => {
         {/* 横三列のマーク */}
         <Toolbar>
         <img src={icon} style={iconStyle}></img>
+          {/* ハンバーガーメニュー */}
           <IconButton
             size="large"
             edge="start"
             color="inherit"
             aria-label="menu"
+            onClick={handleTab}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
+          <Drawer
+            anchor="left"
+            open={anchorElTab}
+            onClose={handleClose}
+          >
+            <Box sx={{ width: 250 }}>
+              <List>
+                <ListItem disablePadding onClick={()=>handleDrawer('/')}>
+                  <ListItemButton>
+                    <ListItemText primary={"BitGame"} />
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+                <ListItem disablePadding onClick={()=>handleDrawer('/othello')}>
+                  <ListItemButton>
+                    <ListItemText primary={"オセロAI"} />
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+              </List>
+            </Box>
+          </Drawer>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {/* Welecome {user ? get_user_id_name(user.uid)[user.uid] : 'Guest'} */}
         Welcome {name}
