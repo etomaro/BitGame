@@ -77,6 +77,8 @@ export const Othello = () => {
 
     const [stateId, setStateId] = useState("0")  // 0:ゲーム開始前, 1:ゲーム中
 
+    const [modelStrength, setModelStrength] = useState("")
+
     const url = "https://api-bitgame.onrender.com/othello"
     const black_stone = isMobile ? black_stone_40 : black_stone_80
     const white_stone = isMobile ? white_stone_40 : white_stone_80
@@ -97,7 +99,12 @@ export const Othello = () => {
             console.log(res.data)
             // AIモデルをセット
             setAiModel(res.data.model)
-            setSelectedAiModel(res.data.model[0])
+            setSelectedAiModel(res.data.model[1])
+
+            let strength = res.data.model.join(" < ")
+            setModelStrength(strength);
+            
+            setModelStrength(strength)
         })
         .catch((error) => {
             setErrorTxt(error)
@@ -204,7 +211,7 @@ export const Othello = () => {
     }
     const settingStyle = {
         width: isMobile ? "100%" : "20%",
-        marginTop: isMobile && "30px"
+        marginTop: isMobile && "20px",
     }
     const gameStart = () => {
         setStateId("1")
@@ -308,11 +315,11 @@ export const Othello = () => {
         return (
             <>
             {/* ゲームの設定 */}
-            <Box style={{marginBottom: isMobile ? "20px" : "40px"}}>
+            <Box style={{marginBottom: isMobile ? "10px" : "40px"}}>
                 <label>ゲームの設定</label>
             </Box>
             {/* 先行か後攻かの選択 */}
-            <Box style={{marginBottom: "10px"}}>
+            <Box style={{marginBottom: "5px"}}>
                 <FormControlLabel
                   control={<Checkbox checked={playerId==="1"} onChange={() => setPlayerId("1")} name="checkedA"/>}
                   label={"先行(黒)"}
@@ -323,7 +330,7 @@ export const Othello = () => {
                 />
             </Box>
                 {/* AIモデルの選択 */}
-            <Box>
+            <Box style={{marginBottom: "10px"}}>
                 <label style={{fontSize: "18px", marginRight: "20px"}}>AIモデルの選択</label>
                 <Select
                     labelId="demo-simple-select-label"
@@ -342,8 +349,15 @@ export const Othello = () => {
                     }
                 </Select>
             </Box>
+            <Box style={{border:"2px dotted #1976D2", textAlign: "left", width: isMobile && "90%", marginLeft: isMobile && "16px"}}>
+                <Box style={{fontSize: "15px"}}>・AIモデルのの強さ順</Box>
+                <Box style={{fontSize: "15px", paddingLeft: "20px", paddingBottom: "10px"}}>{modelStrength}</Box>
+                <Box style={{fontSize: "15px"}}>・AIの戦歴</Box>
+                <Box style={{fontSize: "15px", paddingLeft: "20px"}}>{aiModel[0]} -> 対局回数: 0, 勝率: 100%</Box>
+                <Box style={{fontSize: "15px", paddingLeft: "20px"}}>{aiModel[1]} -> 対局回数: 0, 勝率: 50%</Box>
+            </Box>
             {/* ゲーム開始ボタン */}
-            <Box style={{fontSize: "17px", marginTop: isMobile ? "15px" : "30px"}}>
+            <Box style={{fontSize: "17px", marginTop: isMobile ? "0px" : "30px"}}>
                 <Button variant="contained" style={startButtonStyle} onClick={gameStart}>ゲーム開始</Button>
             </Box>
             </>
