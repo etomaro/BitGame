@@ -17,7 +17,6 @@ import SoundCorrect from '../correct.mp3';
 import SoundInCorrect from '../incorrect.mp3';
 import { Link, useNavigate, Redirect } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValue } from 'firebase/firestore';
 import { create_history, get_history } from '../table/history_table';
 import { get_sequence } from '../table/sequence_table';
 import { EventNote } from '@mui/icons-material';
@@ -47,6 +46,7 @@ import red_stone_80 from '../assets/red_stone_80.png';
 import { Icon, Select } from '@mui/material';
 import axios from 'axios';
 import MenuItem from '@mui/material/MenuItem';
+import { orderBy, limit, doc, writeBatch, collection, getDocs, getDoc, where, query, addDoc, Timestamp, FieldValue, runTransaction } from 'firebase/firestore';
 
 
 const initBoard = () => {
@@ -78,6 +78,16 @@ export const Othello = () => {
     const [stateId, setStateId] = useState("0")  // 0:ゲーム開始前, 1:ゲーム中
 
     const [modelStrength, setModelStrength] = useState("")
+    // シーケンス情報
+    const [othelloHistoryId, setOthelloHistoryId] = useState(0)
+    const [othelloId, setOthelloId] = useState(0)
+    const [randomButtleCount, setRandomButtleCount] = useState(0)
+    const [randomWinCount, setRandomWinCount] = useState(0)
+    const [v1aiButtleCount, setV1aiButtleCount] = useState(0)
+    const [v1aiWinCount, setV1aiWinCount] = useState(0)
+    // DBに保存するゲーム情報
+    const [gameInfoForDB, setGameInfoForDB] = useState([])
+
 
     const url = "https://api-bitgame.onrender.com/othello"
     const black_stone = isMobile ? black_stone_40 : black_stone_80
@@ -103,8 +113,6 @@ export const Othello = () => {
 
             let strength = res.data.model.join(" < ")
             setModelStrength(strength);
-            
-            setModelStrength(strength)
         })
         .catch((error) => {
             setErrorTxt(error)
@@ -129,6 +137,16 @@ export const Othello = () => {
             setErrorTxt(error)
         })
 
+        // dbからシーケンス情報を取得
+        get_sequence("OTHELLO")
+        .then((res) => {
+            setOthelloHistoryId(res["history_id"])
+            setOthelloId(res["othello_id"])
+            setRandomButtleCount(res["random_buttle_count"])
+            setRandomWinCount(res["random_win_count"])
+            setV1aiButtleCount(res["v1ai_buttle_count"])
+            setV1aiWinCount(res["v1ai_win_count"])
+        })
     }, [])
 
     const cellStyle = {
@@ -245,10 +263,20 @@ export const Othello = () => {
             // ゲーム情報をセット
             setGameInfo(new_game_info)
             setActionables(new_actionables)
+
+            // DBに保存するゲーム情報をセット
+            // const new_gameInfoForDB = {
+            //     "othello_history_id": othelloHistoryId,
+            //     "othello_id": othelloId,
+            //     "board": "あとで！",
+            //     "action_player_id": gameInfo["action_player_id"],
+            // }
+            
             
             if (new_game_info["is_game_over"]) {
                 // ゲーム終了
                 console.log("ゲーム終了")
+                updateSequence(new_game_info)
                 return
             }
 
@@ -294,6 +322,7 @@ export const Othello = () => {
             if (new_game_info["is_game_over"]) {
                 // ゲーム終了
                 console.log("ゲーム終了")
+                updateSequence(new_game_info)
                 return
             }
 
@@ -307,6 +336,39 @@ export const Othello = () => {
         })
         .catch((error) => {
             setErrorTxt(error)
+        })
+    }
+    const updateSequence = (new_game_info) => {
+        const sequenceRef = doc(db, 'sequence', 'OTHELLO');  // sequenceテーブル
+        const batch = writeBatch(db);
+        // console.log("after initial db")
+
+        // 1. sequenceテーブルから現在の値を取得(history_id, history_q_id)
+        getDoc(sequenceRef).then((sequence) => {
+            if (selectedAiModel === "random") {
+                const buttle_count = sequence.data()["random_buttle_count"];
+                const win_count = sequence.data()["random_win_count"]
+                // 人間が勝った場合
+                if (new_game_info["win_player"] === playerId) {
+                    batch.update(sequenceRef, { "random_buttle_count": buttle_count + 1 });
+                }else {
+                    batch.update(sequenceRef, { "random_buttle_count": buttle_count + 1 });
+                    batch.update(sequenceRef, { "random_win_count": win_count + 1});
+                }
+            }else if (selectedAiModel === "v1ai") {
+                const buttle_count = sequence.data()["v1ai_buttle_count"];
+                const win_count = sequence.data()["v1ai_win_count"]
+                // 人間が勝った場合
+                if (new_game_info["win_player"] === playerId) {
+                    batch.update(sequenceRef, { "v1ai_buttle_count": buttle_count + 1 });
+                }else {
+                    batch.update(sequenceRef, { "v1ai_buttle_count": buttle_count + 1 });
+                    batch.update(sequenceRef, { "v1ai_win_count": win_count + 1});
+                }
+            }
+    
+            // 4. batch処理を実行
+            batch.commit();
         })
     }
 
@@ -353,8 +415,8 @@ export const Othello = () => {
                 <Box style={{fontSize: "15px"}}>・AIモデルのの強さ順</Box>
                 <Box style={{fontSize: "15px", paddingLeft: "20px", paddingBottom: "10px"}}>{modelStrength}</Box>
                 <Box style={{fontSize: "15px"}}>・AIの戦歴</Box>
-                <Box style={{fontSize: "15px", paddingLeft: "20px"}}>{aiModel[0]} -> 対局回数: 0, 勝率: 100%</Box>
-                <Box style={{fontSize: "15px", paddingLeft: "20px"}}>{aiModel[1]} -> 対局回数: 0, 勝率: 50%</Box>
+                <Box style={{fontSize: "15px", paddingLeft: "20px"}}>random -> 対局回数: {randomButtleCount}, 勝率: {Math.round(randomWinCount/randomButtleCount*1000)/10}%</Box>
+                <Box style={{fontSize: "15px", paddingLeft: "20px"}}>v1ai -> 対局回数: {v1aiButtleCount}, 勝率: {Math.round(v1aiWinCount/v1aiButtleCount*1000)/10}%</Box>
             </Box>
             {/* ゲーム開始ボタン */}
             <Box style={{fontSize: "17px", marginTop: isMobile ? "0px" : "30px"}}>
@@ -363,6 +425,12 @@ export const Othello = () => {
             </>
         )
     }
+
+    const testBtn = () => {
+        console.log("testBtn")
+        // get_sequence("OTHELLO").then((res) => {console.log(res)})
+
+    }
     const gameInfoComponent = () => {
         return (
             <>
@@ -370,6 +438,7 @@ export const Othello = () => {
                 <Box style={{marginBottom: isMobile ? "0px" : "40px"}}>
                     <label>ゲーム情報</label>
                 </Box>
+                {/* <Button onClick={testBtn}>テスト</Button> */}
                 <TableContainer>
                     <Table aria-label="simple table">
                         <TableBody>

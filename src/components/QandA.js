@@ -909,7 +909,7 @@ const TestButton = styled(Button)({
 
   // DBテスト関数(create)
   const testDB_create = (event)=> {
-    get_sequence();
+    get_sequence("STATIC");
   }
 
   const testRow = [
