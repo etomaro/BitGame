@@ -351,9 +351,10 @@ export const Othello = () => {
                 // 人間が勝った場合
                 if (new_game_info["win_player"] === playerId) {
                     batch.update(sequenceRef, { "random_buttle_count": buttle_count + 1 });
+                    batch.update(sequenceRef, { "random_win_count": win_count + 1});
                 }else {
                     batch.update(sequenceRef, { "random_buttle_count": buttle_count + 1 });
-                    batch.update(sequenceRef, { "random_win_count": win_count + 1});
+
                 }
             }else if (selectedAiModel === "v1ai") {
                 const buttle_count = sequence.data()["v1ai_buttle_count"];
@@ -361,9 +362,9 @@ export const Othello = () => {
                 // 人間が勝った場合
                 if (new_game_info["win_player"] === playerId) {
                     batch.update(sequenceRef, { "v1ai_buttle_count": buttle_count + 1 });
+                    batch.update(sequenceRef, { "v1ai_win_count": win_count + 1});
                 }else {
                     batch.update(sequenceRef, { "v1ai_buttle_count": buttle_count + 1 });
-                    batch.update(sequenceRef, { "v1ai_win_count": win_count + 1});
                 }
             }
     
