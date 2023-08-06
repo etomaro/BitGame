@@ -156,7 +156,7 @@ export const Othello = () => {
         borderBottom:"2px solid #1976D2"
     }
     const cellInfoWinStyle = {
-        fontSize: "14px",
+        fontSize: isMobile ? "14px" : "18px",
         fontWeight: "bold",
         color: "red",
         borderBottom:"2px solid #1976D2"
@@ -367,21 +367,43 @@ export const Othello = () => {
         return (
             <>
                 {/* ゲームの情報 */}
-                <Box style={{marginBottom: isMobile ? "20px" : "40px"}}>
+                <Box style={{marginBottom: isMobile ? "0px" : "40px"}}>
                     <label>ゲーム情報</label>
                 </Box>
                 <TableContainer>
                     <Table aria-label="simple table">
                         <TableBody>
-                            {/* ターン */}
-                            <TableRow>
-                               <TableCell align="center" style={cellInfoStyle}>ターン</TableCell>
-                               <TableCell align="center" style={cellInfoStyle}>{gameInfo["turn"]}</TableCell>
-                            </TableRow>
+                            {/* 勝者 */}
+                            {
+                                gameInfo["is_game_over"] &&
+                                <>
+                                <TableRow>
+                                    <TableCell align="center" style={cellInfoWinStyle}>勝者</TableCell>
+                                    <TableCell align="center" style={cellInfoWinStyle}>{gameInfo["win_player"]===playerId ? "あなた" : "AI"}</TableCell>
+                                </TableRow>
+                                {
+                                    !isMobile && 
+                                        <TableRow>
+                                            <TableCell align="center" style={cellEmptyStyle}></TableCell>
+                                            <TableCell align="center" style={cellEmptyStyle}></TableCell>
+                                        </TableRow>
+                                }
+                                    </>
+                            }
                             {/* あなたの手番 */}
                             <TableRow>
                                <TableCell align="center" style={cellInfoStyle}>あなたの手番</TableCell>
                                <TableCell align="center" style={cellInfoStyle}>{playerId === "1" ? "先行(黒)" : "後攻(白)"}</TableCell>
+                            </TableRow>
+                            {/* AIモデル */}
+                            <TableRow>
+                               <TableCell align="center" style={cellInfoStyle}>AIモデル</TableCell>
+                               <TableCell align="center" style={cellInfoStyle}>{selectedAiModel}</TableCell>
+                            </TableRow>
+                            {/* ターン */}
+                            <TableRow>
+                               <TableCell align="center" style={cellInfoStyle}>ターン</TableCell>
+                               <TableCell align="center" style={cellInfoStyle}>{gameInfo["turn"]}</TableCell>
                             </TableRow>
                             {/* 黒石の数 */}
                             <TableRow>
@@ -393,23 +415,6 @@ export const Othello = () => {
                                <TableCell align="center" style={cellInfoStyle}>白石の数</TableCell>
                                <TableCell align="center" style={cellInfoStyle}>{gameInfo["white_count"]}</TableCell>
                             </TableRow>
-                            {/* 勝者 */}
-                            {
-                                gameInfo["is_game_over"] &&
-                                <>
-                                {
-                                    !isMobile && 
-                                        <TableRow>
-                                            <TableCell align="center" style={cellEmptyStyle}></TableCell>
-                                            <TableCell align="center" style={cellEmptyStyle}></TableCell>
-                                        </TableRow>
-                                }
-                                <TableRow>
-                                    <TableCell align="center" style={cellInfoWinStyle}>勝者</TableCell>
-                                    <TableCell align="center" style={cellInfoWinStyle}>{gameInfo["win_player"]===playerId ? "あなた" : "AI"}</TableCell>
-                                </TableRow>
-                                    </>
-                            }
                         </TableBody>
                     </Table>
                 </TableContainer>
