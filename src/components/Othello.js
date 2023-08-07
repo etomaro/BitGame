@@ -449,7 +449,15 @@ export const Othello = () => {
                                 <>
                                 <TableRow>
                                     <TableCell align="center" style={cellInfoWinStyle}>勝者</TableCell>
-                                    <TableCell align="center" style={cellInfoWinStyle}>{gameInfo["win_player"]===playerId ? "あなた" : "AI"}</TableCell>
+                                    {
+                                        gameInfo["win_player"]===playerId && <TableCell align="center" style={cellInfoWinStyle}>あなた</TableCell>
+                                    }
+                                    {
+                                        gameInfo["win_player"]==="2" && <TableCell align="center" style={cellInfoWinStyle}>引き分け</TableCell>
+                                    }
+                                    {
+                                        (gameInfo["win_player"]!==playerId && gameInfo["win_player"]!=="2") && <TableCell align="center" style={cellInfoWinStyle}>AI</TableCell>
+                                    }
                                 </TableRow>
                                 {
                                     !isMobile && 
