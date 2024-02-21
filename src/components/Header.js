@@ -38,6 +38,9 @@ const signUpStyle = {
 // inputKey(コナミコマンド用)
 let inputKey = [];
 
+// 政治サイトのURL
+const URL_SEIZI = "https://seizi-api.onrender.com/";
+
 export const Header = () => {
   // const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -260,6 +263,12 @@ export const Header = () => {
                 <ListItem disablePadding onClick={()=>handleDrawer('/othello')}>
                   <ListItemButton>
                     <ListItemText primary={"オセロAI"} />
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+                <ListItem disablePadding onClick={()=>window.open(URL_SEIZI, '_blank')}>
+                  <ListItemButton>
+                    <ListItemText primary={"政治SNS"} />
                   </ListItemButton>
                 </ListItem>
                 <Divider />
