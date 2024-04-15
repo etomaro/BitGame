@@ -39,7 +39,7 @@ const signUpStyle = {
 let inputKey = [];
 
 // 政治サイトのURL
-const URL_SEIZI = propcess.env.SEIZI_SITE_URL;
+const URL_SEIZI = process.env.SEIZI_SITE_URL;
 
 export const Header = () => {
   // const [auth, setAuth] = React.useState(true);
