@@ -92,6 +92,7 @@ export const Othello = () => {
 
 
     const url = "https://api-bitgame.onrender.com/othello"
+    const othello_api_url = propcess.env.OTHELLO_API_URL
     const black_stone = isMobile ? black_stone_40 : black_stone_80
     const white_stone = isMobile ? white_stone_40 : white_stone_80
     const red_stone = isMobile ? red_stone_40 : red_stone_80
