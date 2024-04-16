@@ -90,8 +90,9 @@ export const Othello = () => {
     // DBに保存するゲーム情報
     const [gameInfoForDB, setGameInfoForDB] = useState([])
 
-
-    const url = process.env.OTHELLO_API_URL
+    console.log("test")
+    console.log(process.env.REACT_APP_OTHELLO_API_URL)
+    const url = process.env.REACT_APP_OTHELLO_API_URL
     const black_stone = isMobile ? black_stone_40 : black_stone_80
     const white_stone = isMobile ? white_stone_40 : white_stone_80
     const red_stone = isMobile ? red_stone_40 : red_stone_80
